@@ -20,7 +20,7 @@ Rotor position:
 - Allowed values: 1 to 26
 - 3 rotors starting positions are used
 
-Rotor ring setting:
+Rotor ring:
 
 - Each rotor contains one or more notches that control rotor stepping. In the military variants, the notches are located
   on the alphabet ring.
