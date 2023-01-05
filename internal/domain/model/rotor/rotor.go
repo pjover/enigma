@@ -35,13 +35,13 @@ func (r Rotor) String() string {
 
 func NewRotor(value string) (Rotor, error) {
 
-	value = strings.ToLower(value)
+	value = strings.ToUpper(value)
 	for i, val := range stringValues {
-		if strings.ToLower(val) == value {
+		if val == value {
 			return Rotor(i), nil
 		}
 	}
-	return Rotor(0), fmt.Errorf("'%s' is an invalid enigma rotor value", strings.ToUpper(value))
+	return Rotor(0), fmt.Errorf("'%s' is an invalid enigma rotor value", value)
 }
 
 func (r Rotor) Format() string {
