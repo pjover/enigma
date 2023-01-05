@@ -7,10 +7,6 @@ import (
 
 type RotorPosition uint
 
-func (r RotorPosition) String() string {
-	return strconv.Itoa(int(r))
-}
-
 func NewRotorPosition(value uint) (RotorPosition, error) {
 
 	if value == 0 || value > 26 {
@@ -18,7 +14,9 @@ func NewRotorPosition(value uint) (RotorPosition, error) {
 	}
 	return RotorPosition(value), nil
 }
-
+func (r RotorPosition) String() string {
+	return strconv.Itoa(int(r))
+}
 func (r RotorPosition) Format() string {
-	return fmt.Sprintf("rotor position %d", r)
+	return fmt.Sprintf("rotor position %s", r.String())
 }

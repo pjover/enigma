@@ -7,10 +7,6 @@ import (
 
 type RotorRing uint
 
-func (r RotorRing) String() string {
-	return strconv.Itoa(int(r))
-}
-
 func NewRotorRing(value uint) (RotorRing, error) {
 
 	if value == 0 || value > 26 {
@@ -19,6 +15,10 @@ func NewRotorRing(value uint) (RotorRing, error) {
 	return RotorRing(value), nil
 }
 
+func (r RotorRing) String() string {
+	return strconv.Itoa(int(r))
+}
+
 func (r RotorRing) Format() string {
-	return fmt.Sprintf("rotor ring %d", r)
+	return fmt.Sprintf("rotor ring %s", r.String())
 }

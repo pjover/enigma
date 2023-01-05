@@ -27,7 +27,7 @@ Rotor ring:
 - Allowed values: 1 to 26
 - 3 rotors ring settings are used
 
-Plugboard:
+Plugboard cable:
 
 - A cable placed onto the plugboard connected letters in pairs. Can be used up to ten of these cables.
 - Allowed values: letters "ABCDEFGHIJKLMNOPQRSTUVWXYZ" in pairs, and cannot repeat letters

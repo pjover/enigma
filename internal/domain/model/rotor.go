@@ -29,10 +29,6 @@ var stringValues = []string{
 	"VIII",
 }
 
-func (r Rotor) String() string {
-	return stringValues[r]
-}
-
 func NewRotor(value string) (Rotor, error) {
 
 	value = strings.ToUpper(value)
@@ -44,6 +40,10 @@ func NewRotor(value string) (Rotor, error) {
 	return Rotor(0), fmt.Errorf("'%s' is an invalid enigma rotor value", value)
 }
 
+func (r Rotor) String() string {
+	return stringValues[r]
+}
+
 func (r Rotor) Format() string {
-	return fmt.Sprintf("rotor %s", stringValues[r])
+	return fmt.Sprintf("rotor %s", r.String())
 }
