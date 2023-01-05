@@ -1,4 +1,4 @@
-package rotor_position
+package model
 
 import (
 	"fmt"

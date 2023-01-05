@@ -1,4 +1,4 @@
-package rotor
+package model
 
 import (
 	"errors"
