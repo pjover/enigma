@@ -12,7 +12,7 @@ type Rotors struct {
 }
 
 func NewRotors(value string) (Rotors, error) {
-	values, err := getValues(value, "Rotors")
+	values, err := getValues(value)
 	if err != nil {
 		return Rotors{}, err
 	}
@@ -35,11 +35,11 @@ func NewRotors(value string) (Rotors, error) {
 	}, nil
 }
 
-func getValues(value string, itemName string) ([]string, error) {
+func getValues(value string) ([]string, error) {
 	values := strings.Split(value, ",")
 	length := len(values)
 	if length != 3 {
-		return []string{}, fmt.Errorf("please define 3 %s instead of %d at '%s'", itemName, length, value)
+		return []string{}, fmt.Errorf("please define 3 values instead of %d at '%s'", length, value)
 	}
 	return values, nil
 }

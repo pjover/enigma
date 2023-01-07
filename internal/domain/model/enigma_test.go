@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -13,7 +14,7 @@ func TestNewRotors(t *testing.T) {
 		wantErr error
 	}{
 		{
-			name:  "Happy case",
+			name:  "OK",
 			value: "I,VIII,II",
 			want: Rotors{
 				first:  I,
@@ -21,6 +22,24 @@ func TestNewRotors(t *testing.T) {
 				third:  II,
 			},
 			wantErr: nil,
+		},
+		{
+			name:    "Error 2 values",
+			value:   "I,VIII",
+			want:    Rotors{},
+			wantErr: errors.New("please define 3 values instead of 2 at 'I,VIII'"),
+		},
+		{
+			name:    "Error 1 value",
+			value:   "",
+			want:    Rotors{},
+			wantErr: errors.New("please define 3 values instead of 1 at ''"),
+		},
+		{
+			name:    "Error wrong value",
+			value:   "I,II,X",
+			want:    Rotors{},
+			wantErr: errors.New("'X' is an invalid enigma rotor value"),
 		},
 	}
 	for _, tt := range tests {
