@@ -9,41 +9,41 @@ import (
 
 func TestNewRotorRing(t *testing.T) {
 	tests := []struct {
-		name   string
-		value  uint
-		actual RotorRing
-		err    error
+		name    string
+		value   uint
+		want    RotorRing
+		wantErr error
 	}{
 		{
-			name:   "Zero",
-			value:  0,
-			actual: 0,
-			err:    errors.New("'0' is an invalid enigma rotor ring value"),
+			name:    "Zero",
+			value:   0,
+			want:    0,
+			wantErr: errors.New("'0' is an invalid enigma rotor ring value"),
 		},
 		{
-			name:   "One",
-			value:  1,
-			actual: 1,
-			err:    nil,
+			name:    "One",
+			value:   1,
+			want:    1,
+			wantErr: nil,
 		},
 		{
-			name:   "Twenty six",
-			value:  26,
-			actual: 26,
-			err:    nil,
+			name:    "Twenty six",
+			value:   26,
+			want:    26,
+			wantErr: nil,
 		},
 		{
-			name:   "Twenty seven",
-			value:  27,
-			actual: 0,
-			err:    errors.New("'27' is an invalid enigma rotor ring value"),
+			name:    "Twenty seven",
+			value:   27,
+			want:    0,
+			wantErr: errors.New("'27' is an invalid enigma rotor ring value"),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := NewRotorRing(tt.value)
-			assert.Equal(t, tt.actual, got)
-			assert.Equal(t, tt.err, err)
+			assert.Equal(t, tt.want, got)
+			assert.Equal(t, tt.wantErr, err)
 		})
 	}
 }
