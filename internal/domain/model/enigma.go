@@ -1,9 +1,47 @@
 package model
 
+import (
+	"fmt"
+	"strings"
+)
+
 type Rotors struct {
 	first  Rotor
 	second Rotor
 	third  Rotor
+}
+
+func NewRotors(value string) (Rotors, error) {
+	values := strings.Split(value, ",")
+	length := len(values)
+	if length != 3 {
+		return Rotors{}, fmt.Errorf("please define 3 Rotors instead of %d at '%s'", length, value)
+	}
+	first, err := NewRotor(values[0])
+	if err != nil {
+		return Rotors{}, err
+	}
+	second, err := NewRotor(values[1])
+	if err != nil {
+		return Rotors{}, err
+	}
+	third, err := NewRotor(values[2])
+	if err != nil {
+		return Rotors{}, err
+	}
+	return Rotors{
+		first:  first,
+		second: second,
+		third:  third,
+	}, nil
+}
+
+func (r Rotors) Format() string {
+	return fmt.Sprintf("rotors: %s, %s, %s",
+		r.first.String(),
+		r.second.String(),
+		r.third.String(),
+	)
 }
 
 type RotorPositions struct {
@@ -12,10 +50,26 @@ type RotorPositions struct {
 	third  Rotor
 }
 
+func (r RotorPositions) Format() string {
+	return fmt.Sprintf("pos: %s, %s, %s",
+		r.first.String(),
+		r.second.String(),
+		r.third.String(),
+	)
+}
+
 type RotorRings struct {
 	first  Rotor
 	second Rotor
 	third  Rotor
+}
+
+func (r RotorRings) Format() string {
+	return fmt.Sprintf("rings: %s, %s, %s",
+		r.first.String(),
+		r.second.String(),
+		r.third.String(),
+	)
 }
 
 type PlugboardCables []PlugboardCable
@@ -41,4 +95,22 @@ func (e Enigma) RotorRings() RotorRings {
 
 func (e Enigma) PlugboardCables() PlugboardCables {
 	return e.plugboardCables
+}
+
+func NewEnigmaMachine(rotors Rotors, rotorPositions RotorPositions, rotorRings RotorRings, plugboardCables PlugboardCables) Enigma {
+	return Enigma{
+		rotors:          rotors,
+		rotorPositions:  rotorPositions,
+		rotorRings:      rotorRings,
+		plugboardCables: plugboardCables,
+	}
+}
+
+func (e Enigma) Format() string {
+	return fmt.Sprintf("Enigma %s, %s, %s, %v",
+		e.rotors.Format(),
+		e.rotorPositions.Format(),
+		e.rotorRings.Format(),
+		e.plugboardCables,
+	)
 }
