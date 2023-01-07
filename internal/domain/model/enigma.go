@@ -53,9 +53,33 @@ func (r Rotors) Format() string {
 }
 
 type RotorPositions struct {
-	first  Rotor
-	second Rotor
-	third  Rotor
+	first  RotorPosition
+	second RotorPosition
+	third  RotorPosition
+}
+
+func NewRotorPositions(value string) (RotorPositions, error) {
+	values, err := getValues(value)
+	if err != nil {
+		return RotorPositions{}, err
+	}
+	first, err := NewRotorPosition(values[0])
+	if err != nil {
+		return RotorPositions{}, err
+	}
+	second, err := NewRotorPosition(values[1])
+	if err != nil {
+		return RotorPositions{}, err
+	}
+	third, err := NewRotorPosition(values[2])
+	if err != nil {
+		return RotorPositions{}, err
+	}
+	return RotorPositions{
+		first:  first,
+		second: second,
+		third:  third,
+	}, nil
 }
 
 func (r RotorPositions) Format() string {
