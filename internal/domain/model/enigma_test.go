@@ -31,3 +31,28 @@ func TestNewRotors(t *testing.T) {
 		})
 	}
 }
+
+func TestRotors_Format(t *testing.T) {
+	tests := []struct {
+		name  string
+		value Rotors
+		want  string
+	}{
+		{
+			name: "Format",
+			value: Rotors{
+				first:  I,
+				second: VIII,
+				third:  II,
+			},
+			want: "rotors: I,VIII,II",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			sut := tt.value
+			got := sut.Format()
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
