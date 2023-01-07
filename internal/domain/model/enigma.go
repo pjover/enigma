@@ -83,7 +83,7 @@ func NewRotorPositions(value string) (RotorPositions, error) {
 }
 
 func (r RotorPositions) Format() string {
-	return fmt.Sprintf("pos: %s, %s, %s",
+	return fmt.Sprintf("pos: %s,%s,%s",
 		r.first.String(),
 		r.second.String(),
 		r.third.String(),
