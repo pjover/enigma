@@ -21,7 +21,3 @@ func NewRotorPosition(value string) (RotorPosition, error) {
 func (r RotorPosition) String() string {
 	return strconv.Itoa(int(r))
 }
-
-func (r RotorPosition) Format() string {
-	return fmt.Sprintf("rotor position %s", r.String())
-}

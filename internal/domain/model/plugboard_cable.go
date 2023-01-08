@@ -97,3 +97,11 @@ func repeatControl(controlMap map[byte]bool, value byte) error {
 	controlMap[value] = true
 	return nil
 }
+
+func (p PlugboardCables) String() string {
+	s := make([]string, len(p))
+	for i, v := range p {
+		s[i] = v.String()
+	}
+	return strings.Join(s, ",")
+}

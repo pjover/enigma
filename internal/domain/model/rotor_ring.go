@@ -21,7 +21,3 @@ func NewRotorRing(value string) (RotorRing, error) {
 func (r RotorRing) String() string {
 	return strconv.Itoa(int(r))
 }
-
-func (r RotorRing) Format() string {
-	return fmt.Sprintf("rotor ring %s", r.String())
-}

@@ -44,6 +44,49 @@ func (r Rotor) String() string {
 	return stringValues[r]
 }
 
-func (r Rotor) Format() string {
-	return fmt.Sprintf("rotor %s", r.String())
+type Rotors struct {
+	first  Rotor
+	second Rotor
+	third  Rotor
+}
+
+func NewRotors(value string) (Rotors, error) {
+	values, err := getValues(value)
+	if err != nil {
+		return Rotors{}, err
+	}
+	first, err := NewRotor(values[0])
+	if err != nil {
+		return Rotors{}, err
+	}
+	second, err := NewRotor(values[1])
+	if err != nil {
+		return Rotors{}, err
+	}
+	third, err := NewRotor(values[2])
+	if err != nil {
+		return Rotors{}, err
+	}
+	return Rotors{
+		first:  first,
+		second: second,
+		third:  third,
+	}, nil
+}
+
+func getValues(value string) ([]string, error) {
+	values := strings.Split(value, ",")
+	length := len(values)
+	if length != 3 {
+		return []string{}, fmt.Errorf("please define 3 values instead of %d at '%s'", length, value)
+	}
+	return values, nil
+}
+
+func (r Rotors) String() string {
+	return fmt.Sprintf("rotors: %s,%s,%s",
+		r.first.String(),
+		r.second.String(),
+		r.third.String(),
+	)
 }

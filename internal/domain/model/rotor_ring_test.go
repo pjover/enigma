@@ -93,14 +93,14 @@ func TestNewRotorRings(t *testing.T) {
 	}
 }
 
-func TestRotorRings_Format(t *testing.T) {
+func TestRotorRings_String(t *testing.T) {
 	tests := []struct {
 		name  string
 		value RotorRings
 		want  string
 	}{
 		{
-			name: "Format",
+			name: "String",
 			value: RotorRings{
 				first:  1,
 				second: 2,
@@ -112,7 +112,7 @@ func TestRotorRings_Format(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			sut := tt.value
-			got := sut.Format()
+			got := sut.String()
 			assert.Equal(t, tt.want, got)
 		})
 	}
