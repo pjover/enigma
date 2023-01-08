@@ -7,12 +7,15 @@ import (
 
 type RotorRing uint
 
-func NewRotorRing(value uint) (RotorRing, error) {
-
-	if value == 0 || value > 26 {
-		return RotorRing(0), fmt.Errorf("'%d' is an invalid enigma rotor ring value", value)
+func NewRotorRing(value string) (RotorRing, error) {
+	number, err := strconv.Atoi(value)
+	if err != nil {
+		return 0, fmt.Errorf("'%s' is an invalid enigma rotor ring number", value)
 	}
-	return RotorRing(value), nil
+	if number == 0 || number > 26 {
+		return RotorRing(0), fmt.Errorf("'%s' is an invalid enigma rotor ring value", value)
+	}
+	return RotorRing(number), nil
 }
 
 func (r RotorRing) String() string {

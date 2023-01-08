@@ -10,31 +10,31 @@ import (
 func TestNewRotorRing(t *testing.T) {
 	tests := []struct {
 		name    string
-		value   uint
+		value   string
 		want    RotorRing
 		wantErr error
 	}{
 		{
 			name:    "Zero",
-			value:   0,
+			value:   "0",
 			want:    0,
 			wantErr: errors.New("'0' is an invalid enigma rotor ring value"),
 		},
 		{
 			name:    "One",
-			value:   1,
+			value:   "1",
 			want:    1,
 			wantErr: nil,
 		},
 		{
 			name:    "Twenty six",
-			value:   26,
+			value:   "26",
 			want:    26,
 			wantErr: nil,
 		},
 		{
 			name:    "Twenty seven",
-			value:   27,
+			value:   "27",
 			want:    0,
 			wantErr: errors.New("'27' is an invalid enigma rotor ring value"),
 		},

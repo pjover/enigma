@@ -91,13 +91,37 @@ func (r RotorPositions) Format() string {
 }
 
 type RotorRings struct {
-	first  Rotor
-	second Rotor
-	third  Rotor
+	first  RotorRing
+	second RotorRing
+	third  RotorRing
+}
+
+func NewRotorRings(value string) (RotorRings, error) {
+	values, err := getValues(value)
+	if err != nil {
+		return RotorRings{}, err
+	}
+	first, err := NewRotorRing(values[0])
+	if err != nil {
+		return RotorRings{}, err
+	}
+	second, err := NewRotorRing(values[1])
+	if err != nil {
+		return RotorRings{}, err
+	}
+	third, err := NewRotorRing(values[2])
+	if err != nil {
+		return RotorRings{}, err
+	}
+	return RotorRings{
+		first:  first,
+		second: second,
+		third:  third,
+	}, nil
 }
 
 func (r RotorRings) Format() string {
-	return fmt.Sprintf("rings: %s, %s, %s",
+	return fmt.Sprintf("rings: %s,%s,%s",
 		r.first.String(),
 		r.second.String(),
 		r.third.String(),
