@@ -1,7 +1,9 @@
 package model
 
 import (
+	"errors"
 	"fmt"
+	"strings"
 )
 
 type RotorPositions struct {
@@ -42,44 +44,6 @@ func (r RotorPositions) String() string {
 	)
 }
 
-type RotorRings struct {
-	first  RotorRing
-	second RotorRing
-	third  RotorRing
-}
-
-func NewRotorRings(value string) (RotorRings, error) {
-	values, err := getValues(value)
-	if err != nil {
-		return RotorRings{}, err
-	}
-	first, err := NewRotorRing(values[0])
-	if err != nil {
-		return RotorRings{}, err
-	}
-	second, err := NewRotorRing(values[1])
-	if err != nil {
-		return RotorRings{}, err
-	}
-	third, err := NewRotorRing(values[2])
-	if err != nil {
-		return RotorRings{}, err
-	}
-	return RotorRings{
-		first:  first,
-		second: second,
-		third:  third,
-	}, nil
-}
-
-func (r RotorRings) String() string {
-	return fmt.Sprintf("rings: %s,%s,%s",
-		r.first.String(),
-		r.second.String(),
-		r.third.String(),
-	)
-}
-
 type Enigma struct {
 	rotors          Rotors
 	rotorPositions  RotorPositions
@@ -103,20 +67,41 @@ func (e Enigma) PlugboardCables() PlugboardCables {
 	return e.plugboardCables
 }
 
-func NewEnigmaMachine(rotors Rotors, rotorPositions RotorPositions, rotorRings RotorRings, plugboardCables PlugboardCables) Enigma {
+func NewEnigmaMachine(value string) (Enigma, error) {
+	values := strings.Split(value, "#")
+	if len(values) != 4 {
+		return Enigma{}, errors.New("error parsing enigma values, must define 4 groups separated by '#'")
+	}
+	rotors, err := NewRotors(values[0])
+	if err != nil {
+		return Enigma{}, err
+	}
+	rotorPositions, err := NewRotorPositions(values[1])
+	if err != nil {
+		return Enigma{}, err
+	}
+	rotorRings, err := NewRotorRings(values[2])
+	if err != nil {
+		return Enigma{}, err
+	}
+	plugboardCables, err := NewPlugboardCables(values[3])
+	if err != nil {
+		return Enigma{}, err
+	}
+
 	return Enigma{
 		rotors:          rotors,
 		rotorPositions:  rotorPositions,
 		rotorRings:      rotorRings,
 		plugboardCables: plugboardCables,
-	}
+	}, nil
 }
 
-func (e Enigma) Format() string {
+func (e Enigma) String() string {
 	return fmt.Sprintf("Enigma %s, %s, %s, %v",
 		e.rotors.String(),
 		e.rotorPositions.String(),
 		e.rotorRings.String(),
-		e.plugboardCables,
+		e.plugboardCables.String(),
 	)
 }
