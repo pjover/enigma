@@ -128,6 +128,19 @@ func (r RotorRings) Format() string {
 	)
 }
 
+func NewPlugboardCables(value string) ([]PlugboardCable, error) {
+	values := strings.Split(value, ",")
+	var cables []PlugboardCable
+	for _, pair := range values {
+		cable, err := NewPlugboardCable(pair)
+		if err != nil {
+			return []PlugboardCable{}, err
+		}
+		cables = append(cables, cable)
+	}
+	return cables, nil
+}
+
 type PlugboardCables []PlugboardCable
 
 type Enigma struct {

@@ -215,3 +215,30 @@ func TestRotorRings_Format(t *testing.T) {
 		})
 	}
 }
+
+func TestNewPlugboardCables(t *testing.T) {
+	tests := []struct {
+		name    string
+		value   string
+		want    []PlugboardCable
+		wantErr error
+	}{
+		{
+			name:  "OK",
+			value: "AB,ZY,MN",
+			want: []PlugboardCable{
+				PlugboardCable{from: 'A', to: 'B'},
+				PlugboardCable{from: 'Z', to: 'Y'},
+				PlugboardCable{from: 'M', to: 'N'},
+			},
+			wantErr: nil,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := NewPlugboardCables(tt.value)
+			assert.Equal(t, tt.want, got)
+			assert.Equal(t, tt.wantErr, err)
+		})
+	}
+}
