@@ -76,3 +76,48 @@ func TestNewPlugboardCable(t *testing.T) {
 		})
 	}
 }
+
+func TestNewPlugboardCables(t *testing.T) {
+	tests := []struct {
+		name    string
+		value   string
+		want    PlugboardCables
+		wantErr error
+	}{
+		{
+			name:  "OK",
+			value: "AB,ZY,MN",
+			want: PlugboardCables{
+				{from: 'A', to: 'B'},
+				{from: 'Z', to: 'Y'},
+				{from: 'M', to: 'N'},
+			},
+			wantErr: nil,
+		},
+		{
+			name:    "Empty plugboard",
+			value:   "",
+			want:    PlugboardCables{},
+			wantErr: nil,
+		},
+		{
+			name:    "Wrong cable",
+			value:   "AB,ZY,MM",
+			want:    PlugboardCables{},
+			wantErr: errors.New("cannot repeat values in a enigma plugboard cable value"),
+		},
+		{
+			name:    "Repeat the same value in different cables",
+			value:   "AB,ZY,AM",
+			want:    PlugboardCables{},
+			wantErr: errors.New("cannot repeat the same value 'A' in different cables"),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := NewPlugboardCables(tt.value)
+			assert.Equal(t, tt.want, got)
+			assert.Equal(t, tt.wantErr, err)
+		})
+	}
+}

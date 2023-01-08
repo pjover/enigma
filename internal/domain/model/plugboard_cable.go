@@ -55,3 +55,45 @@ func (p PlugboardCable) String() string {
 func (p PlugboardCable) Format() string {
 	return fmt.Sprintf("plugboard cable %s-", p.String())
 }
+
+type PlugboardCables []PlugboardCable
+
+func NewPlugboardCables(value string) (PlugboardCables, error) {
+	if value == "" {
+		return PlugboardCables{}, nil
+	}
+	values := strings.Split(value, ",")
+	var cables []PlugboardCable
+	controlMap := make(map[byte]bool)
+	for _, pair := range values {
+		cable, err := loadCable(controlMap, pair)
+		if err != nil {
+			return PlugboardCables{}, err
+		}
+		cables = append(cables, cable)
+	}
+	return cables, nil
+}
+
+func loadCable(controlMap map[byte]bool, pair string) (PlugboardCable, error) {
+	cable, err := NewPlugboardCable(pair)
+	if err != nil {
+		return PlugboardCable{}, err
+	}
+	if err := repeatControl(controlMap, cable.from); err != nil {
+		return PlugboardCable{}, err
+	}
+	if err := repeatControl(controlMap, cable.to); err != nil {
+		return PlugboardCable{}, err
+	}
+	return cable, nil
+}
+
+func repeatControl(controlMap map[byte]bool, value byte) error {
+	_, exists := controlMap[value]
+	if exists {
+		return fmt.Errorf("cannot repeat the same value '%c' in different cables", value)
+	}
+	controlMap[value] = true
+	return nil
+}
