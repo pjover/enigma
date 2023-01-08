@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 )
@@ -19,18 +20,22 @@ func (p PlugboardCable) To() byte {
 
 func NewPlugboardCable(value string) (PlugboardCable, error) {
 	if len(value) != 2 {
-		return PlugboardCable{from: 0, to: 0}, fmt.Errorf("'%s' is an invalid enigma plugboard cable value", value)
+		return PlugboardCable{}, fmt.Errorf("'%s' is an invalid enigma plugboard cable value", value)
 	}
 
 	value = strings.ToUpper(value)
 	from, err := validatePlugboardCableValue(value[0])
 	if err != nil {
-		return PlugboardCable{from: 0, to: 0}, err
+		return PlugboardCable{}, err
 	}
 
 	to, err := validatePlugboardCableValue(value[1])
 	if err != nil {
-		return PlugboardCable{from: 0, to: 0}, err
+		return PlugboardCable{}, err
+	}
+
+	if from == to {
+		return PlugboardCable{}, errors.New("cannot repeat values in a enigma plugboard cable value")
 	}
 
 	return PlugboardCable{from: from, to: to}, nil

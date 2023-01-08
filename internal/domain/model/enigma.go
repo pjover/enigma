@@ -129,12 +129,12 @@ func (r RotorRings) Format() string {
 }
 
 func NewPlugboardCables(value string) ([]PlugboardCable, error) {
+	if value == "" {
+		return []PlugboardCable{}, nil
+	}
 	values := strings.Split(value, ",")
 	var cables []PlugboardCable
 	for _, pair := range values {
-		if pair == "" {
-			continue
-		}
 		cable, err := NewPlugboardCable(pair)
 		if err != nil {
 			return []PlugboardCable{}, err

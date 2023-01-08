@@ -227,17 +227,23 @@ func TestNewPlugboardCables(t *testing.T) {
 			name:  "OK",
 			value: "AB,ZY,MN",
 			want: []PlugboardCable{
-				PlugboardCable{from: 'A', to: 'B'},
-				PlugboardCable{from: 'Z', to: 'Y'},
-				PlugboardCable{from: 'M', to: 'N'},
+				{from: 'A', to: 'B'},
+				{from: 'Z', to: 'Y'},
+				{from: 'M', to: 'N'},
 			},
 			wantErr: nil,
 		},
 		{
 			name:    "Empty plugboard",
 			value:   "",
-			want:    []PlugboardCable(nil),
+			want:    []PlugboardCable{},
 			wantErr: nil,
+		},
+		{
+			name:    "Wrong cable",
+			value:   "AB,ZY,MM",
+			want:    []PlugboardCable{},
+			wantErr: errors.New("cannot repeat values in a enigma plugboard cable value"),
 		},
 	}
 	for _, tt := range tests {

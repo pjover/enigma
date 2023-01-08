@@ -61,6 +61,12 @@ func TestNewPlugboardCable(t *testing.T) {
 			want:    PlugboardCable{from: 0, to: 0},
 			wantErr: errors.New("'[' is an invalid enigma plugboard value"),
 		},
+		{
+			name:    "Repeated value",
+			value:   "AA",
+			want:    PlugboardCable{from: 0, to: 0},
+			wantErr: errors.New("cannot repeat values in a enigma plugboard cable value"),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
