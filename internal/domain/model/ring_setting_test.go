@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewRingSetting(t *testing.T) {
+func TestNewRingSettingFromString(t *testing.T) {
 	tests := []struct {
 		name    string
 		value   string
@@ -41,7 +41,7 @@ func TestNewRingSetting(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewRingSetting(tt.value)
+			got, err := NewRingSettingFromString(tt.value)
 			assert.Equal(t, tt.want, got)
 			assert.Equal(t, tt.wantErr, err)
 		})

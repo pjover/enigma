@@ -7,15 +7,19 @@ import (
 
 type RingSetting uint
 
-func NewRingSetting(value string) (RingSetting, error) {
+func NewRingSetting(value int) (RingSetting, error) {
+	if value == 0 || value > 26 {
+		return RingSetting(0), fmt.Errorf("'%d' is an invalid enigma rotor ring setting value", value)
+	}
+	return RingSetting(value), nil
+}
+
+func NewRingSettingFromString(value string) (RingSetting, error) {
 	number, err := strconv.Atoi(value)
 	if err != nil {
 		return 0, fmt.Errorf("'%s' is an invalid enigma rotor ring setting number", value)
 	}
-	if number == 0 || number > 26 {
-		return RingSetting(0), fmt.Errorf("'%s' is an invalid enigma rotor ring setting value", value)
-	}
-	return RingSetting(number), nil
+	return NewRingSetting(number)
 }
 
 func (r RingSetting) String() string {
@@ -33,15 +37,15 @@ func NewRingSettings(value string) (RingSettings, error) {
 	if err != nil {
 		return RingSettings{}, err
 	}
-	first, err := NewRingSetting(values[0])
+	first, err := NewRingSettingFromString(values[0])
 	if err != nil {
 		return RingSettings{}, err
 	}
-	second, err := NewRingSetting(values[1])
+	second, err := NewRingSettingFromString(values[1])
 	if err != nil {
 		return RingSettings{}, err
 	}
-	third, err := NewRingSetting(values[2])
+	third, err := NewRingSettingFromString(values[2])
 	if err != nil {
 		return RingSettings{}, err
 	}
