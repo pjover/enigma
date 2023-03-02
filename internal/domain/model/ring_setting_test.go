@@ -7,18 +7,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewRotorRing(t *testing.T) {
+func TestNewRingSetting(t *testing.T) {
 	tests := []struct {
 		name    string
 		value   string
-		want    RotorRing
+		want    RingSetting
 		wantErr error
 	}{
 		{
 			name:    "Zero",
 			value:   "0",
 			want:    0,
-			wantErr: errors.New("'0' is an invalid enigma rotor ring value"),
+			wantErr: errors.New("'0' is an invalid enigma rotor ring setting value"),
 		},
 		{
 			name:    "One",
@@ -36,29 +36,29 @@ func TestNewRotorRing(t *testing.T) {
 			name:    "Twenty seven",
 			value:   "27",
 			want:    0,
-			wantErr: errors.New("'27' is an invalid enigma rotor ring value"),
+			wantErr: errors.New("'27' is an invalid enigma rotor ring setting value"),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewRotorRing(tt.value)
+			got, err := NewRingSetting(tt.value)
 			assert.Equal(t, tt.want, got)
 			assert.Equal(t, tt.wantErr, err)
 		})
 	}
 }
 
-func TestNewRotorRings(t *testing.T) {
+func TestNewRingSettings(t *testing.T) {
 	tests := []struct {
 		name    string
 		value   string
-		want    RotorRings
+		want    RingSettings
 		wantErr error
 	}{
 		{
 			name:  "OK",
 			value: "1,15,26",
-			want: RotorRings{
+			want: RingSettings{
 				first:  1,
 				second: 15,
 				third:  26,
@@ -68,40 +68,40 @@ func TestNewRotorRings(t *testing.T) {
 		{
 			name:    "Error 2 values",
 			value:   "1,15",
-			want:    RotorRings{},
+			want:    RingSettings{},
 			wantErr: errors.New("please define 3 values instead of 2 at '1,15'"),
 		},
 		{
 			name:    "Error 1 value",
 			value:   "",
-			want:    RotorRings{},
+			want:    RingSettings{},
 			wantErr: errors.New("please define 3 values instead of 1 at ''"),
 		},
 		{
 			name:    "Error wrong value",
 			value:   "1,15,27",
-			want:    RotorRings{},
-			wantErr: errors.New("'27' is an invalid enigma rotor ring value"),
+			want:    RingSettings{},
+			wantErr: errors.New("'27' is an invalid enigma rotor ring setting value"),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewRotorRings(tt.value)
+			got, err := NewRingSettings(tt.value)
 			assert.Equal(t, tt.want, got)
 			assert.Equal(t, tt.wantErr, err)
 		})
 	}
 }
 
-func TestRotorRings_String(t *testing.T) {
+func TestRingSettings_String(t *testing.T) {
 	tests := []struct {
 		name  string
-		value RotorRings
+		value RingSettings
 		want  string
 	}{
 		{
 			name: "String",
-			value: RotorRings{
+			value: RingSettings{
 				first:  1,
 				second: 2,
 				third:  26,
