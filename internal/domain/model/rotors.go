@@ -5,49 +5,10 @@ import (
 	"strings"
 )
 
-type Rotor uint
-
-const (
-	I Rotor = iota
-	II
-	III
-	IV
-	V
-	VI
-	VII
-	VIII
-)
-
-var stringValues = []string{
-	"I",
-	"II",
-	"III",
-	"IV",
-	"V",
-	"VI",
-	"VII",
-	"VIII",
-}
-
-func NewRotor(value string) (Rotor, error) {
-
-	value = strings.ToUpper(value)
-	for i, val := range stringValues {
-		if val == value {
-			return Rotor(i), nil
-		}
-	}
-	return Rotor(0), fmt.Errorf("'%s' is an invalid enigma rotor value", value)
-}
-
-func (r Rotor) String() string {
-	return stringValues[r]
-}
-
 type Rotors struct {
-	first  Rotor
-	second Rotor
-	third  Rotor
+	first  RotorType
+	second RotorType
+	third  RotorType
 }
 
 func NewRotors(value string) (Rotors, error) {
@@ -55,15 +16,15 @@ func NewRotors(value string) (Rotors, error) {
 	if err != nil {
 		return Rotors{}, err
 	}
-	first, err := NewRotor(values[0])
+	first, err := NewRotorType(values[0])
 	if err != nil {
 		return Rotors{}, err
 	}
-	second, err := NewRotor(values[1])
+	second, err := NewRotorType(values[1])
 	if err != nil {
 		return Rotors{}, err
 	}
-	third, err := NewRotor(values[2])
+	third, err := NewRotorType(values[2])
 	if err != nil {
 		return Rotors{}, err
 	}
