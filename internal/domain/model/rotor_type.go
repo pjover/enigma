@@ -18,17 +18,6 @@ const (
 	VIII
 )
 
-var stringValues = []string{
-	"I",
-	"II",
-	"III",
-	"IV",
-	"V",
-	"VI",
-	"VII",
-	"VIII",
-}
-
 func NewRotorType(value string) (RotorType, error) {
 
 	value = strings.ToUpper(value)
@@ -38,6 +27,17 @@ func NewRotorType(value string) (RotorType, error) {
 		}
 	}
 	return RotorType(0), fmt.Errorf("'%s' is an invalid enigma rotor type value", value)
+}
+
+var stringValues = []string{
+	"I",
+	"II",
+	"III",
+	"IV",
+	"V",
+	"VI",
+	"VII",
+	"VIII",
 }
 
 func (r RotorType) String() string {
@@ -80,4 +80,19 @@ var isAtNotchFunctions = []func(int, int) bool{
 
 func (r RotorType) IsAtNotch(notchPosition int, rotorPosition int) bool {
 	return isAtNotchFunctions[r](notchPosition, rotorPosition)
+}
+
+var notchPositionValues = []uint{
+	16,
+	4,
+	21,
+	9,
+	25,
+	0,
+	0,
+	0,
+}
+
+func (r RotorType) NotchPosition() uint {
+	return notchPositionValues[r]
 }

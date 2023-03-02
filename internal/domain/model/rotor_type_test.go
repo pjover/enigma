@@ -245,3 +245,57 @@ func TestRotorType_IsAtNotch(t *testing.T) {
 		})
 	}
 }
+
+func TestRotorType_NotchPosition(t *testing.T) {
+	tests := []struct {
+		name string
+		r    RotorType
+		want uint
+	}{
+		{
+			"I",
+			I,
+			16,
+		},
+		{
+			"II",
+			II,
+			4,
+		},
+		{
+			"III",
+			III,
+			21,
+		},
+		{
+			"IV",
+			IV,
+			9,
+		},
+		{
+			"V",
+			V,
+			25,
+		},
+		{
+			"VI",
+			VI,
+			0,
+		},
+		{
+			"VII",
+			VII,
+			0,
+		},
+		{
+			"VII",
+			VIII,
+			0,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, tt.r.NotchPosition(), "NotchPosition()")
+		})
+	}
+}
