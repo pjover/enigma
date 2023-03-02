@@ -6,37 +6,37 @@ import (
 	"strings"
 )
 
-type RotorPositions struct {
-	first  RotorPosition
-	second RotorPosition
-	third  RotorPosition
+type StartingPositions struct {
+	first  StartingPosition
+	second StartingPosition
+	third  StartingPosition
 }
 
-func NewRotorPositions(value string) (RotorPositions, error) {
+func NewStartingPositions(value string) (StartingPositions, error) {
 	values, err := getValues(value)
 	if err != nil {
-		return RotorPositions{}, err
+		return StartingPositions{}, err
 	}
-	first, err := NewRotorPosition(values[0])
+	first, err := NewStartingPosition(values[0])
 	if err != nil {
-		return RotorPositions{}, err
+		return StartingPositions{}, err
 	}
-	second, err := NewRotorPosition(values[1])
+	second, err := NewStartingPosition(values[1])
 	if err != nil {
-		return RotorPositions{}, err
+		return StartingPositions{}, err
 	}
-	third, err := NewRotorPosition(values[2])
+	third, err := NewStartingPosition(values[2])
 	if err != nil {
-		return RotorPositions{}, err
+		return StartingPositions{}, err
 	}
-	return RotorPositions{
+	return StartingPositions{
 		first:  first,
 		second: second,
 		third:  third,
 	}, nil
 }
 
-func (r RotorPositions) String() string {
+func (r StartingPositions) String() string {
 	return fmt.Sprintf("pos: %s,%s,%s",
 		r.first.String(),
 		r.second.String(),
@@ -45,22 +45,22 @@ func (r RotorPositions) String() string {
 }
 
 type Enigma struct {
-	rotors          Rotors
-	rotorPositions  RotorPositions
-	rotorRings      RotorRings
-	plugboardCables PlugboardCables
+	rotors            Rotors
+	startingPositions StartingPositions
+	ringSettings      RingSettings
+	plugboardCables   PlugboardCables
 }
 
 func (e Enigma) Rotors() Rotors {
 	return e.rotors
 }
 
-func (e Enigma) RotorPositions() RotorPositions {
-	return e.rotorPositions
+func (e Enigma) StartingPositions() StartingPositions {
+	return e.startingPositions
 }
 
-func (e Enigma) RotorRings() RotorRings {
-	return e.rotorRings
+func (e Enigma) RingSettings() RingSettings {
+	return e.ringSettings
 }
 
 func (e Enigma) PlugboardCables() PlugboardCables {
@@ -76,11 +76,11 @@ func NewEnigmaMachine(value string) (Enigma, error) {
 	if err != nil {
 		return Enigma{}, err
 	}
-	rotorPositions, err := NewRotorPositions(values[1])
+	rotorPositions, err := NewStartingPositions(values[1])
 	if err != nil {
 		return Enigma{}, err
 	}
-	rotorRings, err := NewRotorRings(values[2])
+	rotorRings, err := NewRingSettings(values[2])
 	if err != nil {
 		return Enigma{}, err
 	}
@@ -90,18 +90,18 @@ func NewEnigmaMachine(value string) (Enigma, error) {
 	}
 
 	return Enigma{
-		rotors:          rotors,
-		rotorPositions:  rotorPositions,
-		rotorRings:      rotorRings,
-		plugboardCables: plugboardCables,
+		rotors:            rotors,
+		startingPositions: rotorPositions,
+		ringSettings:      rotorRings,
+		plugboardCables:   plugboardCables,
 	}, nil
 }
 
 func (e Enigma) String() string {
 	return fmt.Sprintf("Enigma %s, %s, %s, %v",
 		e.rotors.String(),
-		e.rotorPositions.String(),
-		e.rotorRings.String(),
+		e.startingPositions.String(),
+		e.ringSettings.String(),
 		e.plugboardCables.String(),
 	)
 }

@@ -14,7 +14,7 @@ Rotors:
 - Allowed values: "I", "II", "III", "IV", "V", "VI", "VII", "VIII"
 - 3 rotors are used
 
-Rotor position:
+Starting position:
 
 - Each rotor can be set to one of 26 possible starting positions when placed in an Enigma machine
 - Allowed values: 1 to 26

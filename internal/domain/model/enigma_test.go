@@ -12,12 +12,12 @@ var testEnigma = Enigma{
 		second: III,
 		third:  VI,
 	},
-	rotorPositions: RotorPositions{
+	startingPositions: StartingPositions{
 		first:  1,
 		second: 24,
 		third:  12,
 	},
-	rotorRings: RotorRings{
+	ringSettings: RingSettings{
 		first:  22,
 		second: 13,
 		third:  5,
@@ -101,12 +101,12 @@ func TestNewEnigmaMachine(t *testing.T) {
 					second: III,
 					third:  VI,
 				},
-				rotorPositions: RotorPositions{
+				startingPositions: StartingPositions{
 					first:  1,
 					second: 24,
 					third:  12,
 				},
-				rotorRings: RotorRings{
+				ringSettings: RingSettings{
 					first:  22,
 					second: 13,
 					third:  5,

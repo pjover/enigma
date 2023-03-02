@@ -7,18 +7,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewRotorPosition(t *testing.T) {
+func TestNewStartingPosition(t *testing.T) {
 	tests := []struct {
 		name    string
 		value   string
-		want    RotorPosition
+		want    StartingPosition
 		wantErr error
 	}{
 		{
 			name:    "Zero",
 			value:   "0",
 			want:    0,
-			wantErr: errors.New("'0' is an invalid enigma rotor position value"),
+			wantErr: errors.New("'0' is an invalid enigma rotor starting position value"),
 		},
 		{
 			name:    "One",
@@ -36,29 +36,29 @@ func TestNewRotorPosition(t *testing.T) {
 			name:    "Twenty seven",
 			value:   "27",
 			want:    0,
-			wantErr: errors.New("'27' is an invalid enigma rotor position value"),
+			wantErr: errors.New("'27' is an invalid enigma rotor starting position value"),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewRotorPosition(tt.value)
+			got, err := NewStartingPosition(tt.value)
 			assert.Equal(t, tt.want, got)
 			assert.Equal(t, tt.wantErr, err)
 		})
 	}
 }
 
-func TestNewRotorPositions(t *testing.T) {
+func TestNewStartingPositions(t *testing.T) {
 	tests := []struct {
 		name    string
 		value   string
-		want    RotorPositions
+		want    StartingPositions
 		wantErr error
 	}{
 		{
 			name:  "OK",
 			value: "1,15,26",
-			want: RotorPositions{
+			want: StartingPositions{
 				first:  1,
 				second: 15,
 				third:  26,
@@ -68,40 +68,40 @@ func TestNewRotorPositions(t *testing.T) {
 		{
 			name:    "Error 2 values",
 			value:   "1,15",
-			want:    RotorPositions{},
+			want:    StartingPositions{},
 			wantErr: errors.New("please define 3 values instead of 2 at '1,15'"),
 		},
 		{
 			name:    "Error 1 value",
 			value:   "",
-			want:    RotorPositions{},
+			want:    StartingPositions{},
 			wantErr: errors.New("please define 3 values instead of 1 at ''"),
 		},
 		{
 			name:    "Error wrong value",
 			value:   "1,15,27",
-			want:    RotorPositions{},
-			wantErr: errors.New("'27' is an invalid enigma rotor position value"),
+			want:    StartingPositions{},
+			wantErr: errors.New("'27' is an invalid enigma rotor starting position value"),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewRotorPositions(tt.value)
+			got, err := NewStartingPositions(tt.value)
 			assert.Equal(t, tt.want, got)
 			assert.Equal(t, tt.wantErr, err)
 		})
 	}
 }
 
-func TestRotorPositions_String(t *testing.T) {
+func TestStartingPositions_String(t *testing.T) {
 	tests := []struct {
 		name  string
-		value RotorPositions
+		value StartingPositions
 		want  string
 	}{
 		{
 			name: "Format",
-			value: RotorPositions{
+			value: StartingPositions{
 				first:  1,
 				second: 2,
 				third:  26,
