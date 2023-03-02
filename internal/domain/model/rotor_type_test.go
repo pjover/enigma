@@ -126,7 +126,7 @@ func TestRotorType_Encoding(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equalf(t, tt.want, tt.r.Encoding(), "Encoding()")
+			assert.Equalf(t, tt.want, tt.r.encoding(), "encoding()")
 		})
 	}
 }
@@ -296,6 +296,114 @@ func TestRotorType_NotchPosition(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert.Equalf(t, tt.want, tt.r.NotchPosition(), "NotchPosition()")
+		})
+	}
+}
+
+func Test_ForwardWiring(t *testing.T) {
+	tests := []struct {
+		name     string
+		encoding string
+		want     []uint
+	}{
+		{
+			"I",
+			I.encoding(),
+			I.ForwardWiring(),
+		},
+		{
+			"II",
+			II.encoding(),
+			II.ForwardWiring(),
+		},
+		{
+			"III",
+			III.encoding(),
+			III.ForwardWiring(),
+		},
+		{
+			"IV",
+			IV.encoding(),
+			IV.ForwardWiring(),
+		},
+		{
+			"V",
+			V.encoding(),
+			V.ForwardWiring(),
+		},
+		{
+			"VI",
+			VI.encoding(),
+			VI.ForwardWiring(),
+		},
+		{
+			"VII",
+			VII.encoding(),
+			VII.ForwardWiring(),
+		},
+		{
+			"VIII",
+			VIII.encoding(),
+			VIII.ForwardWiring(),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, decodeWiring(tt.encoding), "decodeWiring(%v)", tt.encoding)
+		})
+	}
+}
+
+func Test_inverseWiring(t *testing.T) {
+	tests := []struct {
+		name   string
+		wiring []uint
+		want   []uint
+	}{
+		{
+			"I",
+			I.ForwardWiring(),
+			I.InverseWiring(),
+		},
+		{
+			"II",
+			II.ForwardWiring(),
+			II.InverseWiring(),
+		},
+		{
+			"III",
+			III.ForwardWiring(),
+			III.InverseWiring(),
+		},
+		{
+			"IV",
+			IV.ForwardWiring(),
+			IV.InverseWiring(),
+		},
+		{
+			"V",
+			V.ForwardWiring(),
+			V.InverseWiring(),
+		},
+		{
+			"VI",
+			VI.ForwardWiring(),
+			VI.InverseWiring(),
+		},
+		{
+			"VII",
+			VII.ForwardWiring(),
+			VII.InverseWiring(),
+		},
+		{
+			"VIII",
+			VIII.ForwardWiring(),
+			VIII.InverseWiring(),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, inverseWiring(tt.wiring), "inverseWiring(%v)", tt.wiring)
 		})
 	}
 }
