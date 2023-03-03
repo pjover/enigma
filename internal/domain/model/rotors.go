@@ -6,9 +6,9 @@ import (
 )
 
 type Rotors struct {
-	first  RotorType
-	second RotorType
-	third  RotorType
+	first  RotorNumber
+	second RotorNumber
+	third  RotorNumber
 }
 
 func NewRotors(value string) (Rotors, error) {

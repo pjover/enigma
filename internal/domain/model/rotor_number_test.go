@@ -10,7 +10,7 @@ func TestNewRotor(t *testing.T) {
 	tests := []struct {
 		name    string
 		value   string
-		want    RotorType
+		want    RotorNumber
 		wantErr error
 	}{
 		{
@@ -65,7 +65,7 @@ func TestNewRotor(t *testing.T) {
 			name:    "Invalid rotor value",
 			value:   "iX",
 			want:    I,
-			wantErr: errors.New("'IX' is an invalid enigma rotor type value"),
+			wantErr: errors.New("'IX' is an invalid enigma rotor number"),
 		},
 	}
 	for _, tt := range tests {
@@ -80,7 +80,7 @@ func TestNewRotor(t *testing.T) {
 func TestRotorType_Encoding(t *testing.T) {
 	tests := []struct {
 		name string
-		r    RotorType
+		r    RotorNumber
 		want string
 	}{
 		{
@@ -138,7 +138,7 @@ func TestRotorType_IsAtNotch(t *testing.T) {
 	}
 	tests := []struct {
 		name string
-		r    RotorType
+		r    RotorNumber
 		args args
 		want bool
 	}{
@@ -249,7 +249,7 @@ func TestRotorType_IsAtNotch(t *testing.T) {
 func TestRotorType_NotchPosition(t *testing.T) {
 	tests := []struct {
 		name string
-		r    RotorType
+		r    RotorNumber
 		want uint
 	}{
 		{

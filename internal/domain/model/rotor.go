@@ -1,12 +1,12 @@
 package model
 
 type Rotor struct {
-	number        RotorType
+	number        RotorNumber
 	ringSetting   RingSetting
 	rotorPosition uint
 }
 
-func NewRotor(number RotorType, startingPosition StartingPosition, ringSetting RingSetting) Rotor {
+func NewRotor(number RotorNumber, startingPosition StartingPosition, ringSetting RingSetting) Rotor {
 	return Rotor{
 		number:        number,
 		ringSetting:   ringSetting,
@@ -14,7 +14,7 @@ func NewRotor(number RotorType, startingPosition StartingPosition, ringSetting R
 	}
 }
 
-func (r *Rotor) Number() RotorType {
+func (r *Rotor) Number() RotorNumber {
 	return r.number
 }
 

@@ -5,10 +5,10 @@ import (
 	"strings"
 )
 
-type RotorType uint
+type RotorNumber uint
 
 const (
-	I RotorType = iota
+	I RotorNumber = iota
 	II
 	III
 	IV
@@ -18,15 +18,15 @@ const (
 	VIII
 )
 
-func NewRotorType(value string) (RotorType, error) {
+func NewRotorType(value string) (RotorNumber, error) {
 
 	value = strings.ToUpper(value)
 	for i, val := range stringValues {
 		if val == value {
-			return RotorType(i), nil
+			return RotorNumber(i), nil
 		}
 	}
-	return RotorType(0), fmt.Errorf("'%s' is an invalid enigma rotor type value", value)
+	return RotorNumber(0), fmt.Errorf("'%s' is an invalid enigma rotor number", value)
 }
 
 var stringValues = []string{
@@ -40,7 +40,7 @@ var stringValues = []string{
 	"VIII",
 }
 
-func (r RotorType) String() string {
+func (r RotorNumber) String() string {
 	return stringValues[r]
 }
 
@@ -63,7 +63,7 @@ var isAtNotchFunctions = []func(int, int) bool{
 	secondNotchTypeFunc,
 }
 
-func (r RotorType) IsAtNotch(notchPosition int, rotorPosition int) bool {
+func (r RotorNumber) IsAtNotch(notchPosition int, rotorPosition int) bool {
 	return isAtNotchFunctions[r](notchPosition, rotorPosition)
 }
 
@@ -78,7 +78,7 @@ var notchPositionValues = []uint{
 	0,
 }
 
-func (r RotorType) NotchPosition() uint {
+func (r RotorNumber) NotchPosition() uint {
 	return notchPositionValues[r]
 }
 
@@ -93,7 +93,7 @@ var encodingValues = []string{
 	"FKQHTLXOCBJSPDZRAMEWNIUYGV",
 }
 
-func (r RotorType) encoding() string {
+func (r RotorNumber) encoding() string {
 	return encodingValues[r]
 }
 
@@ -117,7 +117,7 @@ var forwardWiringValues = [][]uint{
 	{0x5, 0xa, 0x10, 0x7, 0x13, 0xb, 0x17, 0xe, 0x2, 0x1, 0x9, 0x12, 0xf, 0x3, 0x19, 0x11, 0x0, 0xc, 0x4, 0x16, 0xd, 0x8, 0x14, 0x18, 0x6, 0x15},
 }
 
-func (r RotorType) ForwardWiring() []uint {
+func (r RotorNumber) ForwardWiring() []uint {
 	return forwardWiringValues[r]
 }
 
@@ -140,6 +140,6 @@ var inverseWiringValues = [][]uint{
 	{0x10, 0x9, 0x8, 0xd, 0x12, 0x0, 0x18, 0x3, 0x15, 0xa, 0x1, 0x5, 0x11, 0x14, 0x7, 0xc, 0x2, 0xf, 0xb, 0x4, 0x16, 0x19, 0x13, 0x6, 0x17, 0xe},
 }
 
-func (r RotorType) InverseWiring() []uint {
+func (r RotorNumber) InverseWiring() []uint {
 	return inverseWiringValues[r]
 }

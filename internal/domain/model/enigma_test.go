@@ -119,7 +119,7 @@ func TestNewEnigmaMachine(t *testing.T) {
 			name:    "error in value",
 			value:   "I,III,X#1,24,12#22,13,5#AZ,YN,MF,OQ,WH",
 			want:    Enigma{},
-			wantErr: errors.New("'X' is an invalid enigma rotor type value"),
+			wantErr: errors.New("'X' is an invalid enigma rotor number"),
 		},
 	}
 	for _, tt := range tests {

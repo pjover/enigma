@@ -7,7 +7,7 @@ import (
 
 func TestRotor_TurnOver(t *testing.T) {
 	type fields struct {
-		number        RotorType
+		number        RotorNumber
 		ringSetting   RingSetting
 		rotorPosition uint
 	}
@@ -68,7 +68,7 @@ func TestRotor_TurnOver(t *testing.T) {
 
 func TestRotor_IsAtNotch(t *testing.T) {
 	type fields struct {
-		number        RotorType
+		number        RotorNumber
 		ringSetting   RingSetting
 		rotorPosition uint
 	}

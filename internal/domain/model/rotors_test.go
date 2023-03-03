@@ -40,7 +40,7 @@ func TestNewRotors(t *testing.T) {
 			name:    "Error wrong value",
 			value:   "I,II,X",
 			want:    Rotors{},
-			wantErr: errors.New("'X' is an invalid enigma rotor type value"),
+			wantErr: errors.New("'X' is an invalid enigma rotor number"),
 		},
 	}
 	for _, tt := range tests {
