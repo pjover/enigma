@@ -103,5 +103,5 @@ func (p PlugboardCables) String() string {
 	for i, v := range p {
 		s[i] = v.String()
 	}
-	return "cables: " + strings.Join(s, ",")
+	return "(" + strings.Join(s, ",") + ")"
 }

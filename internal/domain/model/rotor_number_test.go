@@ -6,78 +6,48 @@ import (
 	"testing"
 )
 
-func TestNewRotor(t *testing.T) {
+func TestNewRotorNumber(t *testing.T) {
 	tests := []struct {
 		name    string
-		value   string
+		number  uint
 		want    RotorNumber
 		wantErr error
 	}{
 		{
-			name:    "I",
-			value:   "i",
+			name:    "Zero",
+			number:  0,
+			want:    0,
+			wantErr: errors.New("0 is an invalid enigma rotor number"),
+		},
+		{
+			name:    "One",
+			number:  1,
 			want:    I,
 			wantErr: nil,
 		},
 		{
-			name:    "II",
-			value:   "II",
-			want:    II,
-			wantErr: nil,
-		},
-		{
-			name:    "III",
-			value:   "iii",
-			want:    III,
-			wantErr: nil,
-		},
-		{
-			name:    "IV",
-			value:   "IV",
-			want:    IV,
-			wantErr: nil,
-		},
-		{
-			name:    "V",
-			value:   "v",
-			want:    V,
-			wantErr: nil,
-		},
-		{
-			name:    "VI",
-			value:   "VI",
-			want:    VI,
-			wantErr: nil,
-		},
-		{
-			name:    "VII",
-			value:   "vii",
-			want:    VII,
-			wantErr: nil,
-		},
-		{
-			name:    "VIII",
-			value:   "VIII",
+			name:    "Eight",
+			number:  8,
 			want:    VIII,
 			wantErr: nil,
 		},
 		{
-			name:    "Invalid rotor value",
-			value:   "iX",
-			want:    I,
-			wantErr: errors.New("'IX' is an invalid enigma rotor number"),
+			name:    "Nine",
+			number:  9,
+			want:    0,
+			wantErr: errors.New("9 is an invalid enigma rotor number"),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewRotorType(tt.value)
+			got, err := NewRotorNumber(tt.number)
 			assert.Equal(t, tt.want, got)
 			assert.Equal(t, tt.wantErr, err)
 		})
 	}
 }
 
-func TestRotorType_Encoding(t *testing.T) {
+func TestRotorNumber_Encoding(t *testing.T) {
 	tests := []struct {
 		name string
 		r    RotorNumber
@@ -131,7 +101,7 @@ func TestRotorType_Encoding(t *testing.T) {
 	}
 }
 
-func TestRotorType_IsAtNotch(t *testing.T) {
+func TestRotorNumber_IsAtNotch(t *testing.T) {
 	type args struct {
 		notchPosition int
 		rotorPosition int
@@ -246,7 +216,7 @@ func TestRotorType_IsAtNotch(t *testing.T) {
 	}
 }
 
-func TestRotorType_NotchPosition(t *testing.T) {
+func TestRotorNumber_NotchPosition(t *testing.T) {
 	tests := []struct {
 		name string
 		r    RotorNumber

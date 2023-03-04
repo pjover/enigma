@@ -1,17 +1,31 @@
 package model
 
+import "fmt"
+
 type Rotor struct {
-	number        RotorNumber
-	ringSetting   RingSetting
-	rotorPosition uint
+	number      RotorNumber
+	ringSetting RingSetting
+	position    RotorPosition
 }
 
-func NewRotor(number RotorNumber, startingPosition StartingPosition, ringSetting RingSetting) Rotor {
-	return Rotor{
-		number:        number,
-		ringSetting:   ringSetting,
-		rotorPosition: uint(startingPosition),
+func NewRotor(number uint, ringSetting uint, startingPosition uint) (Rotor, error) {
+	rn, err := NewRotorNumber(number)
+	if err != nil {
+		return Rotor{}, err
 	}
+	rs, err := NewRingSetting(ringSetting)
+	if err != nil {
+		return Rotor{}, err
+	}
+	rp, err := NewRotorPosition(startingPosition)
+	if err != nil {
+		return Rotor{}, err
+	}
+	return Rotor{
+		number:      rn,
+		ringSetting: rs,
+		position:    rp,
+	}, nil
 }
 
 func (r *Rotor) Number() RotorNumber {
@@ -22,27 +36,35 @@ func (r *Rotor) RingSetting() RingSetting {
 	return r.ringSetting
 }
 
-func (r *Rotor) RotorPosition() uint {
-	return r.rotorPosition
+func (r *Rotor) Position() RotorPosition {
+	return r.position
 }
 
-func (r *Rotor) encipher(i uint, rotorPosition uint, ring RingSetting, wiring []uint) uint {
-	shift := rotorPosition - uint(ring)
+func (r *Rotor) encipher(i uint, position RotorPosition, ring RingSetting, wiring []uint) uint {
+	shift := uint(position) - uint(ring)
 	return (wiring[(i+shift+26)%26] - shift + 26) % 26
 }
 
 func (r *Rotor) Forward(i uint) uint {
-	return r.encipher(i, r.rotorPosition, r.ringSetting, r.number.ForwardWiring())
+	return r.encipher(i, r.position, r.ringSetting, r.number.ForwardWiring())
 }
 
 func (r *Rotor) Backward(i uint) uint {
-	return r.encipher(i, r.rotorPosition, r.ringSetting, r.number.InverseWiring())
+	return r.encipher(i, r.position, r.ringSetting, r.number.InverseWiring())
 }
 
 func (r *Rotor) IsAtNotch() bool {
-	return r.number.NotchPosition() == r.rotorPosition
+	return r.number.NotchPosition() == uint(r.position)
 }
 
 func (r *Rotor) TurnOver() {
-	r.rotorPosition = (r.rotorPosition + 1) % 26
+	r.position = (r.position + 1) % 26
+}
+
+func (r *Rotor) String() string {
+	return fmt.Sprintf("[%s,%s:%d]",
+		r.number.String(),
+		r.ringSetting.String(),
+		r.position,
+	)
 }

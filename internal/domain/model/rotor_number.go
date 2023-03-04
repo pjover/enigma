@@ -2,7 +2,6 @@ package model
 
 import (
 	"fmt"
-	"strings"
 )
 
 type RotorNumber uint
@@ -18,15 +17,12 @@ const (
 	VIII
 )
 
-func NewRotorType(value string) (RotorNumber, error) {
+func NewRotorNumber(number uint) (RotorNumber, error) {
 
-	value = strings.ToUpper(value)
-	for i, val := range stringValues {
-		if val == value {
-			return RotorNumber(i), nil
-		}
+	if number < 1 || number > 8 {
+		return RotorNumber(0), fmt.Errorf("%d is an invalid enigma rotor number", number)
 	}
-	return RotorNumber(0), fmt.Errorf("'%s' is an invalid enigma rotor number", value)
+	return RotorNumber(number - 1), nil
 }
 
 var stringValues = []string{
