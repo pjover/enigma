@@ -7,22 +7,20 @@ import (
 )
 
 var testEnigma = Enigma{
-	rotors: Rotors{
-		first: Rotor{
-			number:      I,
-			ringSetting: RingSetting(22),
-			position:    RotorPosition(1),
-		},
-		second: Rotor{
-			number:      III,
-			ringSetting: RingSetting(13),
-			position:    RotorPosition(24),
-		},
-		third: Rotor{
-			number:      VI,
-			ringSetting: RingSetting(5),
-			position:    RotorPosition(12),
-		},
+	leftRotor: Rotor{
+		number:      I,
+		ringSetting: RingSetting(22),
+		position:    RotorPosition(1),
+	},
+	middleRotor: Rotor{
+		number:      III,
+		ringSetting: RingSetting(13),
+		position:    RotorPosition(24),
+	},
+	rightRotor: Rotor{
+		number:      VI,
+		ringSetting: RingSetting(5),
+		position:    RotorPosition(12),
 	},
 	plugboardCables: PlugboardCables{
 		PlugboardCable{
@@ -57,7 +55,7 @@ func TestEnigma_String(t *testing.T) {
 		{
 			name:  "String",
 			value: testEnigma,
-			want:  "[I,22:1] [III,13:24] [VI,5:12] (A-Z,Y-N,M-F,O-Q,W-H)",
+			want:  "[I,22,1] [III,13,24] [VI,5,12] (AZ,YN,MF,OQ,WH)",
 		},
 	}
 	for _, tt := range tests {
@@ -77,53 +75,67 @@ func TestNewEnigmaMachine(t *testing.T) {
 		wantErr error
 	}{
 		{
-			name:    "empty value",
-			value:   "",
-			want:    Enigma{},
-			wantErr: errors.New("error parsing enigma values, must define 4 groups separated by '#'"),
+			name:  "empty value",
+			value: "",
+			want:  Enigma{},
+			wantErr: errors.New("error parsing enigma values, " +
+				"must define 3 rotors, like [I,22,1] [III,13,24] [VI,5,12] (AZ,YN,MF,OQ,WH)"),
 		},
 		{
-			name:    "missed one value",
-			value:   "I,III,VI#22,13,5#1,24,12",
-			want:    Enigma{},
-			wantErr: errors.New("error parsing enigma values, must define 4 groups separated by '#'"),
+			name:  "random value",
+			value: "loren ipsum",
+			want:  Enigma{},
+			wantErr: errors.New("error parsing enigma values, " +
+				"must define 3 rotors, like [I,22,1] [III,13,24] [VI,5,12] (AZ,YN,MF,OQ,WH)"),
+		},
+		{
+			name:  "wrong format",
+			value: "[I,22:1] [III,13,24] (AZ,YN,MF,OQ,WH)",
+			want:  Enigma{},
+			wantErr: errors.New("error parsing enigma values, " +
+				"must define 3 rotors, like [I,22,1] [III,13,24] [VI,5,12] (AZ,YN,MF,OQ,WH)"),
+		},
+		{
+			name:  "missed one rotor",
+			value: "[I,22,1] [III,13,24] (AZ,YN,MF,OQ,WH)",
+			want:  Enigma{},
+			wantErr: errors.New("error parsing enigma values, " +
+				"must define 3 rotors, like [I,22,1] [III,13,24] [VI,5,12] (AZ,YN,MF,OQ,WH)"),
 		},
 		{
 			name:    "happy case",
-			value:   "I,III,VI#22,13,5#1,24,12#AZ,YN,MF,OQ,WH",
+			value:   "[I,22,1] [III,13,24] [VI,5,12] (AZ,YN,MF,OQ,WH)",
 			want:    testEnigma,
 			wantErr: nil,
 		},
 		{
 			name:  "no cables",
-			value: "I,III,VI#22,13,5#1,24,12#",
+			value: "[I,22,1] [III,13,24] [VI,5,12]",
 			want: Enigma{
-				rotors: Rotors{
-					first: Rotor{
-						number:      I,
-						ringSetting: RingSetting(22),
-						position:    RotorPosition(1),
-					},
-					second: Rotor{
-						number:      III,
-						ringSetting: RingSetting(13),
-						position:    RotorPosition(24),
-					},
-					third: Rotor{
-						number:      VI,
-						ringSetting: RingSetting(5),
-						position:    RotorPosition(12),
-					},
+				leftRotor: Rotor{
+					number:      I,
+					ringSetting: RingSetting(22),
+					position:    RotorPosition(1),
+				},
+				middleRotor: Rotor{
+					number:      III,
+					ringSetting: RingSetting(13),
+					position:    RotorPosition(24),
+				},
+				rightRotor: Rotor{
+					number:      VI,
+					ringSetting: RingSetting(5),
+					position:    RotorPosition(12),
 				},
 				plugboardCables: PlugboardCables{},
 			},
 			wantErr: nil,
 		},
 		{
-			name:    "error in value",
-			value:   "I,III,X#1,24,12#22,13,5#AZ,YN,MF,OQ,WH",
+			name:    "error in roman number",
+			value:   "[I,22,1] [III,13,24] [IIV,5,2]",
 			want:    Enigma{},
-			wantErr: errors.New("X is an invalid enigma rotor number"),
+			wantErr: errors.New("invalid roman number"),
 		},
 	}
 	for _, tt := range tests {

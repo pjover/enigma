@@ -3,66 +3,109 @@ package model
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 )
 
 type Enigma struct {
-	rotors          Rotors
+	leftRotor       Rotor
+	middleRotor     Rotor
+	rightRotor      Rotor
 	plugboardCables PlugboardCables
 }
 
-func (e Enigma) Rotors() Rotors {
-	return e.rotors
+func (e Enigma) LeftRotor() Rotor {
+	return e.leftRotor
+}
+
+func (e Enigma) MiddleRotor() Rotor {
+	return e.middleRotor
+}
+
+func (e Enigma) RightRotor() Rotor {
+	return e.rightRotor
 }
 
 func (e Enigma) PlugboardCables() PlugboardCables {
 	return e.plugboardCables
 }
 
-func NewEnigmaMachine(value string) (Enigma, error) {
-	values := strings.Split(value, "#")
-	if len(values) != 4 {
-		return Enigma{}, errors.New("error parsing enigma values, must define 4 groups separated by '#'")
-	}
-
-	rotorNumbers, err := parseRomanNumbers(values[0], "rotor number")
+func NewEnigmaMachine(text string) (Enigma, error) {
+	values, err := splitText(text)
 	if err != nil {
 		return Enigma{}, err
 	}
 
-	ringSettings, err := parseArabicNumbers(values[1], "ring setting")
-	if err != nil {
-		return Enigma{}, err
+	var rotors []Rotor
+	for i := 0; i < 3; i++ {
+		rotor, err := parseRotor(values[i])
+		if err != nil {
+			return Enigma{}, err
+		}
+		rotors = append(rotors, rotor)
 	}
 
-	startingPositions, err := parseArabicNumbers(values[2], "starting position")
-	if err != nil {
-		return Enigma{}, err
-	}
-
-	plugboardCables, err := NewPlugboardCables(values[3])
-	if err != nil {
-		return Enigma{}, err
-	}
-
-	rotors, err := NewRotors(rotorNumbers, ringSettings, startingPositions)
-	if err != nil {
-		return Enigma{}, err
+	var plugboardCables PlugboardCables
+	if len(values) == 4 {
+		plugboardCables, err = NewPlugboardCables(values[3])
+		if err != nil {
+			return Enigma{}, err
+		}
 	}
 
 	return Enigma{
-		rotors:          rotors,
+		leftRotor:       rotors[0],
+		middleRotor:     rotors[1],
+		rightRotor:      rotors[2],
 		plugboardCables: plugboardCables,
 	}, nil
 }
 
-func parseRomanNumbers(value string, name string) ([3]uint, error) {
-	return parseNumbers(value, name, romanNumberToInt)
+var regExpWithCables = regexp.MustCompile(`(?s)\[([IV,\d]*)] \[([IV,\d]*)] \[([IV,\d]*)] ?\(?([A-Z\-,]*)\)?`)
+var regExpWithoutCables = regexp.MustCompile(`(?s)\[([IV,\d]*)] \[([IV,\d]*)] \[([IV,\d]*)]`)
+
+var parseError = errors.New("error parsing enigma values, " +
+	"must define 3 rotors, like [I,22,1] [III,13,24] [VI,5,12] (AZ,YN,MF,OQ,WH)")
+
+func splitText(text string) ([]string, error) {
+	matchesWithCables := regExpWithCables.FindStringSubmatch(text)
+	if matchesWithCables != nil {
+		groups := matchesWithCables[1:]
+		return groups, nil
+	}
+
+	matchesWithoutCables := regExpWithoutCables.FindStringSubmatch(text)
+	if matchesWithoutCables != nil {
+		groups := matchesWithoutCables[1:]
+		return groups, nil
+	}
+
+	return nil, parseError
 }
 
-func parseArabicNumbers(value string, name string) ([3]uint, error) {
-	return parseNumbers(value, name, strconv.Atoi)
+func parseRotor(text string) (Rotor, error) {
+	values := strings.Split(text, ",")
+	if len(values) != 3 {
+		return Rotor{}, parseError
+	}
+
+	number, err := romanNumberToInt(values[0])
+	if err != nil {
+		return Rotor{}, err
+	}
+
+	ringSetting, err := strconv.Atoi(values[1])
+	if err != nil {
+		return Rotor{}, err
+	}
+
+	startingPosition, err := strconv.Atoi(values[2])
+	if err != nil {
+		return Rotor{}, err
+	}
+
+	return NewRotor(number, ringSetting, startingPosition)
 }
 
 func romanNumberToInt(value string) (int, error) {
@@ -88,35 +131,11 @@ func romanNumberToInt(value string) (int, error) {
 	}
 }
 
-func parseNumbers(value string, name string, converter func(string) (int, error)) ([3]uint, error) {
-	values, err := splitNumbers(value, name)
-	if err != nil {
-		return [3]uint{}, err
-	}
-
-	var numbers [3]uint
-	for i, val := range values {
-		number, err := converter(val)
-		if err != nil {
-			return [3]uint{}, fmt.Errorf("%s is an invalid enigma %s", val, name)
-		}
-		numbers[i] = uint(number)
-	}
-	return numbers, nil
-}
-
-func splitNumbers(value string, name string) ([]string, error) {
-	values := strings.Split(value, ",")
-	length := len(values)
-	if length != 3 {
-		return []string{}, fmt.Errorf("please define 3 %s values instead of %d at '%s'", name, length, value)
-	}
-	return values, nil
-}
-
 func (e Enigma) String() string {
-	return fmt.Sprintf("%s %v",
-		e.rotors.String(),
+	return fmt.Sprintf("%s %s %s %v",
+		e.leftRotor.String(),
+		e.middleRotor.String(),
+		e.rightRotor.String(),
 		e.plugboardCables.String(),
 	)
 }

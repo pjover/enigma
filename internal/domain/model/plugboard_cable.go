@@ -49,7 +49,7 @@ func validatePlugboardCableValue(value byte) (byte, error) {
 }
 
 func (p PlugboardCable) String() string {
-	return fmt.Sprintf("%c-%c", p.from, p.to)
+	return fmt.Sprintf("%c%c", p.from, p.to)
 }
 
 func (p PlugboardCable) Format() string {

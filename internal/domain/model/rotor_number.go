@@ -17,7 +17,7 @@ const (
 	VIII
 )
 
-func NewRotorNumber(number uint) (RotorNumber, error) {
+func NewRotorNumber(number int) (RotorNumber, error) {
 
 	if number < 1 || number > 8 {
 		return RotorNumber(0), fmt.Errorf("%d is an invalid enigma rotor number", number)

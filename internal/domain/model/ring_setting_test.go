@@ -10,7 +10,7 @@ import (
 func TestNewRingSetting(t *testing.T) {
 	tests := []struct {
 		name        string
-		ringSetting uint
+		ringSetting int
 		want        RingSetting
 		wantErr     error
 	}{

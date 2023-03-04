@@ -10,7 +10,7 @@ import (
 func TestNewRotorPosition1(t *testing.T) {
 	tests := []struct {
 		name     string
-		position uint
+		position int
 		want     RotorPosition
 		wantErr  error
 	}{

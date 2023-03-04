@@ -7,7 +7,7 @@ import (
 
 type RingSetting uint
 
-func NewRingSetting(ringSetting uint) (RingSetting, error) {
+func NewRingSetting(ringSetting int) (RingSetting, error) {
 	if ringSetting == 0 || ringSetting > 26 {
 		return RingSetting(0), fmt.Errorf("'%d' is an invalid enigma rotor ring setting value", ringSetting)
 	}

@@ -9,7 +9,7 @@ import (
 func TestNewRotorNumber(t *testing.T) {
 	tests := []struct {
 		name    string
-		number  uint
+		number  int
 		want    RotorNumber
 		wantErr error
 	}{

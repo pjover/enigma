@@ -8,7 +8,7 @@ type Rotor struct {
 	position    RotorPosition
 }
 
-func NewRotor(number uint, ringSetting uint, startingPosition uint) (Rotor, error) {
+func NewRotor(number int, ringSetting int, startingPosition int) (Rotor, error) {
 	rn, err := NewRotorNumber(number)
 	if err != nil {
 		return Rotor{}, err
@@ -62,7 +62,7 @@ func (r *Rotor) TurnOver() {
 }
 
 func (r *Rotor) String() string {
-	return fmt.Sprintf("[%s,%s:%d]",
+	return fmt.Sprintf("[%s,%s,%d]",
 		r.number.String(),
 		r.ringSetting.String(),
 		r.position,
