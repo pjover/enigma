@@ -84,19 +84,19 @@ func TestNewEnigmaMachine(t *testing.T) {
 		},
 		{
 			name:    "missed one value",
-			value:   "1,3,6#22,13,5#1,24,12",
+			value:   "I,III,VI#22,13,5#1,24,12",
 			want:    Enigma{},
 			wantErr: errors.New("error parsing enigma values, must define 4 groups separated by '#'"),
 		},
 		{
 			name:    "happy case",
-			value:   "1,3,6#22,13,5#1,24,12#AZ,YN,MF,OQ,WH",
+			value:   "I,III,VI#22,13,5#1,24,12#AZ,YN,MF,OQ,WH",
 			want:    testEnigma,
 			wantErr: nil,
 		},
 		{
 			name:  "no cables",
-			value: "1,3,6#22,13,5#1,24,12#",
+			value: "I,III,VI#22,13,5#1,24,12#",
 			want: Enigma{
 				rotors: Rotors{
 					first: Rotor{
@@ -121,9 +121,9 @@ func TestNewEnigmaMachine(t *testing.T) {
 		},
 		{
 			name:    "error in value",
-			value:   "1,3,10#1,24,12#22,13,5#AZ,YN,MF,OQ,WH",
+			value:   "I,III,X#1,24,12#22,13,5#AZ,YN,MF,OQ,WH",
 			want:    Enigma{},
-			wantErr: errors.New("10 is an invalid enigma rotor number"),
+			wantErr: errors.New("X is an invalid enigma rotor number"),
 		},
 	}
 	for _, tt := range tests {
