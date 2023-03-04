@@ -270,7 +270,7 @@ func TestRotorNumber_NotchPosition(t *testing.T) {
 	}
 }
 
-func Test_ForwardWiring(t *testing.T) {
+func TestRotorNumber_ForwardWiring(t *testing.T) {
 	tests := []struct {
 		name     string
 		encoding string
@@ -324,7 +324,7 @@ func Test_ForwardWiring(t *testing.T) {
 	}
 }
 
-func Test_inverseWiring(t *testing.T) {
+func TestRotorNumber_InverseWiring(t *testing.T) {
 	tests := []struct {
 		name   string
 		wiring []uint
@@ -373,7 +373,8 @@ func Test_inverseWiring(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equalf(t, tt.want, inverseWiring(tt.wiring), "inverseWiring(%v)", tt.wiring)
+			got := inverseWiring(tt.wiring)
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }
