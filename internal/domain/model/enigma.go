@@ -15,22 +15,6 @@ type Enigma struct {
 	plugboardCables PlugboardCables
 }
 
-func (e Enigma) LeftRotor() Rotor {
-	return e.leftRotor
-}
-
-func (e Enigma) MiddleRotor() Rotor {
-	return e.middleRotor
-}
-
-func (e Enigma) RightRotor() Rotor {
-	return e.rightRotor
-}
-
-func (e Enigma) PlugboardCables() PlugboardCables {
-	return e.plugboardCables
-}
-
 func NewEnigmaMachine(text string) (Enigma, error) {
 	values, err := splitText(text)
 	if err != nil {
@@ -138,4 +122,14 @@ func (e Enigma) String() string {
 		e.rightRotor.String(),
 		e.plugboardCables.String(),
 	)
+}
+
+func (e Enigma) rotate() {
+	if e.middleRotor.IsAtNotch() {
+		e.middleRotor.TurnOver()
+		e.leftRotor.TurnOver()
+	} else if e.rightRotor.IsAtNotch() {
+		e.middleRotor.TurnOver()
+	}
+	e.rightRotor.TurnOver()
 }
