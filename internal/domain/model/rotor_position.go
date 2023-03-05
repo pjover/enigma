@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-type RotorPosition uint
+type RotorPosition int
 
 func NewRotorPosition(position int) (RotorPosition, error) {
 	if position == 0 || position > 26 {

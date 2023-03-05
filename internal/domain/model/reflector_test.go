@@ -80,7 +80,7 @@ func TestReflector_ForwardWiring(t *testing.T) {
 	tests := []struct {
 		name      string
 		reflector Reflector
-		want      []uint
+		want      []int
 	}{
 		{
 			name:      "A",
@@ -111,8 +111,8 @@ func TestReflector_ForwardWiring(t *testing.T) {
 func TestReflector_InverseWiring(t *testing.T) {
 	tests := []struct {
 		name   string
-		wiring []uint
-		want   []uint
+		wiring []int
+		want   []int
 	}{
 		{
 			"A",

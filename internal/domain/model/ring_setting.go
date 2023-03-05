@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-type RingSetting uint
+type RingSetting int
 
 func NewRingSetting(ringSetting int) (RingSetting, error) {
 	if ringSetting == 0 || ringSetting > 26 {

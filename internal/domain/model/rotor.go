@@ -40,21 +40,21 @@ func (r *Rotor) Position() RotorPosition {
 	return r.position
 }
 
-func (r *Rotor) encipher(i uint, position RotorPosition, ring RingSetting, wiring []uint) uint {
-	shift := uint(position) - uint(ring)
+func (r *Rotor) encipher(i int, position RotorPosition, ring RingSetting, wiring []int) int {
+	shift := int(position) - int(ring)
 	return (wiring[(i+shift+26)%26] - shift + 26) % 26
 }
 
-func (r *Rotor) Forward(i uint) uint {
+func (r *Rotor) Forward(i int) int {
 	return r.encipher(i, r.position, r.ringSetting, r.number.ForwardWiring())
 }
 
-func (r *Rotor) Backward(i uint) uint {
+func (r *Rotor) Backward(i int) int {
 	return r.encipher(i, r.position, r.ringSetting, r.number.InverseWiring())
 }
 
 func (r *Rotor) IsAtNotch() bool {
-	return r.number.NotchPosition() == uint(r.position)
+	return r.number.NotchPosition() == int(r.position)
 }
 
 func (r *Rotor) TurnOver() {

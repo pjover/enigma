@@ -220,7 +220,7 @@ func TestRotorNumber_NotchPosition(t *testing.T) {
 	tests := []struct {
 		name string
 		r    RotorNumber
-		want uint
+		want int
 	}{
 		{
 			"I",
@@ -274,7 +274,7 @@ func TestRotorNumber_ForwardWiring(t *testing.T) {
 	tests := []struct {
 		name     string
 		encoding string
-		want     []uint
+		want     []int
 	}{
 		{
 			"I",
@@ -327,8 +327,8 @@ func TestRotorNumber_ForwardWiring(t *testing.T) {
 func TestRotorNumber_InverseWiring(t *testing.T) {
 	tests := []struct {
 		name   string
-		wiring []uint
-		want   []uint
+		wiring []int
+		want   []int
 	}{
 		{
 			"I",
