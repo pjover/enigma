@@ -188,11 +188,20 @@ func TestRotor_IsAtNotch(t *testing.T) {
 			want: false,
 		},
 		{
-			name: "Is a notch",
+			name: "Is a notch VI",
 			fields: fields{
 				VI,
 				RingSetting(2),
-				0,
+				12,
+			},
+			want: true,
+		},
+		{
+			name: "Is a notch VI",
+			fields: fields{
+				VI,
+				RingSetting(2),
+				25,
 			},
 			want: true,
 		},

@@ -63,21 +63,6 @@ func (r RotorNumber) IsAtNotch(notchPosition int, rotorPosition int) bool {
 	return isAtNotchFunctions[r](notchPosition, rotorPosition)
 }
 
-var notchPositionValues = []int{
-	16,
-	4,
-	21,
-	9,
-	25,
-	0,
-	0,
-	0,
-}
-
-func (r RotorNumber) NotchPosition() int {
-	return notchPositionValues[r]
-}
-
 var rotorEncodingValues = []string{
 	"EKMFLGDQVZNTOWYHXUSPAIBRCJ",
 	"AJDKSIRUXBLHWTMCQGZNPYFVOE",

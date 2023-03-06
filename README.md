@@ -17,14 +17,14 @@ Rotors:
 Starting position:
 
 - Each rotor can be set to one of 26 possible starting positions when placed in an Enigma machine
-- Allowed values: 1 to 26
+- Allowed values: 0 to 25
 - 3 rotors starting positions are used
 
 Ring setting:
 
 - Each rotor contains one or more notches that control rotor stepping. In the military variants, the notches are located
   on the alphabet ring.
-- Allowed values: 1 to 26
+- Allowed values: 0 to 25
 - 3 rotors ring settings are used
 
 Plugboard cable:
@@ -38,5 +38,4 @@ Plugboard cable:
 - Wikipedia Enigma [page](https://en.wikipedia.org/wiki/Enigma_machine)
 - How did the Enigma Machine work? [Jared Owen video](https://www.youtube.com/watch?v=ybkkiGtJmkM)
 - Cracking Enigma [Computerphile video](https://www.youtube.com/watch?v=RzWB5jL5RX0)
-  and [Java code](https://github.com/mikepound/enigma)
 
