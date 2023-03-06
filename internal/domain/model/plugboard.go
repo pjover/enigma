@@ -7,14 +7,14 @@ import (
 )
 
 type PlugboardCable struct {
-	from byte
-	to   byte
+	from int
+	to   int
 }
 
-func (p PlugboardCable) From() byte {
+func (p PlugboardCable) From() int {
 	return p.from
 }
-func (p PlugboardCable) To() byte {
+func (p PlugboardCable) To() int {
 	return p.to
 }
 
@@ -24,12 +24,12 @@ func NewPlugboardCable(value string) (PlugboardCable, error) {
 	}
 
 	value = strings.ToUpper(value)
-	from, err := validatePlugboardCableValue(value[0])
+	from, err := validatePlugboardCableValue(int(value[0]))
 	if err != nil {
 		return PlugboardCable{}, err
 	}
 
-	to, err := validatePlugboardCableValue(value[1])
+	to, err := validatePlugboardCableValue(int(value[1]))
 	if err != nil {
 		return PlugboardCable{}, err
 	}
@@ -38,10 +38,10 @@ func NewPlugboardCable(value string) (PlugboardCable, error) {
 		return PlugboardCable{}, errors.New("cannot repeat values in a enigma plugboard cable value")
 	}
 
-	return PlugboardCable{from: from, to: to}, nil
+	return PlugboardCable{from: from - 65, to: to - 65}, nil
 }
 
-func validatePlugboardCableValue(value byte) (byte, error) {
+func validatePlugboardCableValue(value int) (int, error) {
 	if value < 'A' || value > 'Z' {
 		return 0, fmt.Errorf("'%c' is an invalid enigma plugboard value", value)
 	}
@@ -49,33 +49,33 @@ func validatePlugboardCableValue(value byte) (byte, error) {
 }
 
 func (p PlugboardCable) String() string {
-	return fmt.Sprintf("%c%c", p.from, p.to)
+	return fmt.Sprintf("%c%c", p.from+65, p.to+65)
 }
 
 func (p PlugboardCable) Format() string {
 	return fmt.Sprintf("plugboard cable %s-", p.String())
 }
 
-type PlugboardCables []PlugboardCable
+type Plugboard []PlugboardCable
 
-func NewPlugboardCables(value string) (PlugboardCables, error) {
+func NewPlugboard(value string) (Plugboard, error) {
+	cables := make([]PlugboardCable, 0)
 	if value == "" {
-		return PlugboardCables{}, nil
+		return cables, nil
 	}
 	values := strings.Split(value, ",")
-	var cables []PlugboardCable
-	controlMap := make(map[byte]bool)
+	controlMap := make(map[int]bool)
 	for _, pair := range values {
 		cable, err := loadCable(controlMap, pair)
 		if err != nil {
-			return PlugboardCables{}, err
+			return Plugboard{}, err
 		}
 		cables = append(cables, cable)
 	}
 	return cables, nil
 }
 
-func loadCable(controlMap map[byte]bool, pair string) (PlugboardCable, error) {
+func loadCable(controlMap map[int]bool, pair string) (PlugboardCable, error) {
 	cable, err := NewPlugboardCable(pair)
 	if err != nil {
 		return PlugboardCable{}, err
@@ -89,19 +89,40 @@ func loadCable(controlMap map[byte]bool, pair string) (PlugboardCable, error) {
 	return cable, nil
 }
 
-func repeatControl(controlMap map[byte]bool, value byte) error {
+func repeatControl(controlMap map[int]bool, value int) error {
 	_, exists := controlMap[value]
 	if exists {
-		return fmt.Errorf("cannot repeat the same value '%c' in different cables", value)
+		return fmt.Errorf("cannot repeat the same value '%c' in different cables", value+65)
 	}
 	controlMap[value] = true
 	return nil
 }
 
-func (p PlugboardCables) String() string {
+func (p Plugboard) String() string {
 	s := make([]string, len(p))
 	for i, v := range p {
 		s[i] = v.String()
 	}
 	return "(" + strings.Join(s, ",") + ")"
+}
+
+func (p Plugboard) GetFreePlugs() []int {
+	freePlugs := make(map[int]bool)
+	for i := 0; i < 26; i++ {
+		freePlugs[i] = true
+	}
+
+	for i := 0; i < len(p); i++ {
+		cable := p[i]
+		freePlugs[cable.from] = false
+		freePlugs[cable.to] = false
+	}
+
+	result := make([]int, 0)
+	for i := 0; i < 26; i++ {
+		if freePlugs[i] {
+			result = append(result, i)
+		}
+	}
+	return result
 }

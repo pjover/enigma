@@ -12,7 +12,7 @@ type Enigma struct {
 	leftRotor       Rotor
 	middleRotor     Rotor
 	rightRotor      Rotor
-	plugboardCables PlugboardCables
+	plugboardCables Plugboard
 }
 
 func NewEnigmaMachine(text string) (Enigma, error) {
@@ -30,9 +30,9 @@ func NewEnigmaMachine(text string) (Enigma, error) {
 		rotors = append(rotors, rotor)
 	}
 
-	var plugboardCables PlugboardCables
+	var plugboardCables Plugboard
 	if len(values) == 4 {
-		plugboardCables, err = NewPlugboardCables(values[3])
+		plugboardCables, err = NewPlugboard(values[3])
 		if err != nil {
 			return Enigma{}, err
 		}
