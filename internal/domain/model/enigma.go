@@ -9,10 +9,10 @@ import (
 )
 
 type Enigma struct {
-	leftRotor   Rotor
-	middleRotor Rotor
-	rightRotor  Rotor
-	plugboard   Plugboard
+	leftRotor   *Rotor
+	middleRotor *Rotor
+	rightRotor  *Rotor
+	plugboard   *Plugboard
 	reflector   Reflector
 }
 
@@ -45,11 +45,11 @@ func NewEnigmaMachine(text string) (Enigma, error) {
 	}
 
 	return Enigma{
-		leftRotor:   rotors[0],
-		middleRotor: rotors[1],
-		rightRotor:  rotors[2],
+		leftRotor:   &rotors[0],
+		middleRotor: &rotors[1],
+		rightRotor:  &rotors[2],
 		reflector:   reflector,
-		plugboard:   plugboard,
+		plugboard:   &plugboard,
 	}, nil
 }
 
@@ -141,4 +141,26 @@ func (e Enigma) rotate() {
 		e.middleRotor.TurnOver()
 	}
 	e.rightRotor.TurnOver()
+}
+
+func (e Enigma) encryptInt(i int) int {
+	e.rotate()
+	i1 := e.plugboard.Forward(i)
+	i2 := e.rightRotor.Forward(i1)
+	i3 := e.middleRotor.Forward(i2)
+	i4 := e.leftRotor.Forward(i3)
+	i5 := e.reflector.Forward(i4)
+	i6 := e.leftRotor.Backward(i5)
+	i7 := e.middleRotor.Backward(i6)
+	i8 := e.rightRotor.Backward(i7)
+	return e.plugboard.Forward(i8)
+}
+
+func (e Enigma) Encrypt(text string) string {
+	var builder strings.Builder
+	for _, char := range text {
+		encrypted := e.encryptInt(int(char - 65))
+		builder.WriteByte(byte(encrypted + 65))
+	}
+	return builder.String()
 }
