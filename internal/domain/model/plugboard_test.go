@@ -185,6 +185,102 @@ func TestPlugboard_GetFreePlugs(t *testing.T) {
 	}
 }
 
+func TestPlugboard_Forward(t *testing.T) {
+	p1 := getPlugboard("")
+	p2 := getPlugboard("BM,DH,RS,KN,GZ,FQ")
+	tests := []struct {
+		name      string
+		Plugboard Plugboard
+		i         int
+		want      int
+	}{
+		{
+			"Without cables, 0",
+			p1,
+			0,
+			0,
+		},
+		{
+			"Without cables, 1",
+			p1,
+			1,
+			1,
+		},
+		{
+			"Without cables, 7",
+			p1,
+			7,
+			7,
+		},
+		{
+			"Without cables, 13",
+			p1,
+			13,
+			13,
+		},
+		{
+			"Without cables, 20",
+			p1,
+			20,
+			20,
+		},
+		{
+			"Without cables, 24",
+			p1,
+			24,
+			24,
+		},
+		{
+			"Without cables, 25",
+			p1,
+			25,
+			25,
+		},
+		{
+			"With cables, 1",
+			p2,
+			1,
+			12,
+		},
+		{
+			"With cables, 7",
+			p2,
+			7,
+			3,
+		},
+		{
+			"With cables, 13",
+			p2,
+			13,
+			10,
+		},
+		{
+			"With cables, 20",
+			p2,
+			20,
+			20,
+		},
+		{
+			"With cables, 24",
+			p2,
+			24,
+			24,
+		},
+		{
+			"Without cables, 25",
+			p2,
+			25,
+			6,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			actual := tt.Plugboard.Forward(tt.i)
+			assert.Equal(t, tt.want, actual)
+		})
+	}
+}
+
 func getPlugboard(value string) Plugboard {
 	p, _ := NewPlugboard(value)
 	return p

@@ -153,3 +153,7 @@ func (p Plugboard) GetFreePlugs() []int {
 	}
 	return result
 }
+
+func (p Plugboard) Forward(i int) int {
+	return p.wiring[i]
+}
