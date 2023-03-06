@@ -9,10 +9,11 @@ import (
 )
 
 type Enigma struct {
-	leftRotor       Rotor
-	middleRotor     Rotor
-	rightRotor      Rotor
-	plugboardCables Plugboard
+	leftRotor   Rotor
+	middleRotor Rotor
+	rightRotor  Rotor
+	plugboard   Plugboard
+	reflector   Reflector
 }
 
 func NewEnigmaMachine(text string) (Enigma, error) {
@@ -30,27 +31,34 @@ func NewEnigmaMachine(text string) (Enigma, error) {
 		rotors = append(rotors, rotor)
 	}
 
-	var plugboardCables Plugboard
-	if len(values) == 4 {
-		plugboardCables, err = NewPlugboard(values[3])
+	reflector, err := NewReflector(values[3])
+	if err != nil {
+		return Enigma{}, err
+	}
+
+	var plugboard Plugboard
+	if len(values) == 5 {
+		plugboard, err = NewPlugboard(values[4])
 		if err != nil {
 			return Enigma{}, err
 		}
 	}
 
 	return Enigma{
-		leftRotor:       rotors[0],
-		middleRotor:     rotors[1],
-		rightRotor:      rotors[2],
-		plugboardCables: plugboardCables,
+		leftRotor:   rotors[0],
+		middleRotor: rotors[1],
+		rightRotor:  rotors[2],
+		reflector:   reflector,
+		plugboard:   plugboard,
 	}, nil
 }
 
-var regExpWithCables = regexp.MustCompile(`(?s)\[([IV,\d]*)] \[([IV,\d]*)] \[([IV,\d]*)] ?\(?([A-Z\-,]*)\)?`)
-var regExpWithoutCables = regexp.MustCompile(`(?s)\[([IV,\d]*)] \[([IV,\d]*)] \[([IV,\d]*)]`)
+var regExpWithCables = regexp.MustCompile(`(?s)\[([IV,\d]*)] \[([IV,\d]*)] \[([IV,\d]*)] \{([ABC])} ?\(?([A-Z\-,]*)\)?`)
+var regExpWithoutCables = regexp.MustCompile(`(?s)\[([IV,\d]*)] \[([IV,\d]*)] \[([IV,\d]*)] \{([ABC])`)
 
 var parseError = errors.New("error parsing enigma values, " +
-	"must define 3 rotors, like [I,22,1] [III,13,24] [VI,5,12] (AZ,YN,MF,OQ,WH)")
+	"must define 3 rotors, one reflector and plugboard cables, like " +
+	"[I,22,1] [III,13,24] [VI,5,12] {A} (AZ,YN,MF,OQ,WH)")
 
 func splitText(text string) ([]string, error) {
 	matchesWithCables := regExpWithCables.FindStringSubmatch(text)
@@ -116,11 +124,12 @@ func romanNumberToInt(value string) (int, error) {
 }
 
 func (e Enigma) String() string {
-	return fmt.Sprintf("%s %s %s %v",
+	return fmt.Sprintf("%s %s %s %s %v",
 		e.leftRotor.String(),
 		e.middleRotor.String(),
 		e.rightRotor.String(),
-		e.plugboardCables.String(),
+		e.reflector.String(),
+		e.plugboard.String(),
 	)
 }
 

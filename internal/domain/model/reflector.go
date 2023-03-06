@@ -48,3 +48,13 @@ func (r Reflector) forwardWiring() []int {
 func (r Reflector) Forward(value int) int {
 	return reflectorForwardWiringValues[r][value]
 }
+
+var reflectorStringValues = []string{
+	"{A}",
+	"{B}",
+	"{C}",
+}
+
+func (r Reflector) String() string {
+	return reflectorStringValues[r]
+}

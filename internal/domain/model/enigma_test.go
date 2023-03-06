@@ -22,7 +22,8 @@ var testEnigma = Enigma{
 		ringSetting: RingSetting(5),
 		position:    RotorPosition(12),
 	},
-	plugboardCables: Plugboard{
+	reflector: A,
+	plugboard: Plugboard{
 		cables: []PlugboardCable{
 			{
 				from: 0,
@@ -58,7 +59,7 @@ func TestEnigma_String(t *testing.T) {
 		{
 			name:  "String",
 			value: testEnigma,
-			want:  "[I,22,1] [III,13,24] [VI,5,12] (AZ,YN,MF,OQ,WH)",
+			want:  "[I,22,1] [III,13,24] [VI,5,12] {A} (AZ,YN,MF,OQ,WH)",
 		},
 	}
 	for _, tt := range tests {
@@ -71,6 +72,9 @@ func TestEnigma_String(t *testing.T) {
 }
 
 func TestNewEnigmaMachine(t *testing.T) {
+	testErr := errors.New("error parsing enigma values, " +
+		"must define 3 rotors, one reflector and plugboard cables, like " +
+		"[I,22,1] [III,13,24] [VI,5,12] {A} (AZ,YN,MF,OQ,WH)")
 	tests := []struct {
 		name    string
 		value   string
@@ -78,42 +82,50 @@ func TestNewEnigmaMachine(t *testing.T) {
 		wantErr error
 	}{
 		{
-			name:  "empty value",
-			value: "",
-			want:  Enigma{},
-			wantErr: errors.New("error parsing enigma values, " +
-				"must define 3 rotors, like [I,22,1] [III,13,24] [VI,5,12] (AZ,YN,MF,OQ,WH)"),
+			name:    "empty value",
+			value:   "",
+			want:    Enigma{},
+			wantErr: testErr,
 		},
 		{
-			name:  "random value",
-			value: "loren ipsum",
-			want:  Enigma{},
-			wantErr: errors.New("error parsing enigma values, " +
-				"must define 3 rotors, like [I,22,1] [III,13,24] [VI,5,12] (AZ,YN,MF,OQ,WH)"),
+			name:    "random value",
+			value:   "loren ipsum",
+			want:    Enigma{},
+			wantErr: testErr,
 		},
 		{
-			name:  "wrong format",
-			value: "[I,22:1] [III,13,24] (AZ,YN,MF,OQ,WH)",
-			want:  Enigma{},
-			wantErr: errors.New("error parsing enigma values, " +
-				"must define 3 rotors, like [I,22,1] [III,13,24] [VI,5,12] (AZ,YN,MF,OQ,WH)"),
+			name:    "wrong format",
+			value:   "[I,22:1] [III,13,24] (AZ,YN,MF,OQ,WH)",
+			want:    Enigma{},
+			wantErr: testErr,
 		},
 		{
-			name:  "missed one rotor",
-			value: "[I,22,1] [III,13,24] (AZ,YN,MF,OQ,WH)",
-			want:  Enigma{},
-			wantErr: errors.New("error parsing enigma values, " +
-				"must define 3 rotors, like [I,22,1] [III,13,24] [VI,5,12] (AZ,YN,MF,OQ,WH)"),
+			name:    "missed reflector",
+			value:   "[I,22:1] [III,13,24] [VI,5,12] (AZ,YN,MF,OQ,WH)",
+			want:    Enigma{},
+			wantErr: testErr,
+		},
+		{
+			name:    "missed one rotor",
+			value:   "[I,22,1] [III,13,24] {A} (AZ,YN,MF,OQ,WH)",
+			want:    Enigma{},
+			wantErr: testErr,
+		},
+		{
+			name:    "wrong reflector",
+			value:   "[I,22,1] [III,13,24] {D} (AZ,YN,MF,OQ,WH)",
+			want:    Enigma{},
+			wantErr: testErr,
 		},
 		{
 			name:    "happy case",
-			value:   "[I,22,1] [III,13,24] [VI,5,12] (AZ,YN,MF,OQ,WH)",
+			value:   "[I,22,1] [III,13,24] [VI,5,12] {A} (AZ,YN,MF,OQ,WH)",
 			want:    testEnigma,
 			wantErr: nil,
 		},
 		{
 			name:  "no cables",
-			value: "[I,22,1] [III,13,24] [VI,5,12]",
+			value: "[I,22,1] [III,13,24] [VI,5,12] {B}",
 			want: Enigma{
 				leftRotor: Rotor{
 					number:      I,
@@ -130,7 +142,8 @@ func TestNewEnigmaMachine(t *testing.T) {
 					ringSetting: RingSetting(5),
 					position:    RotorPosition(12),
 				},
-				plugboardCables: Plugboard{
+				reflector: B,
+				plugboard: Plugboard{
 					cables: []PlugboardCable{},
 					wiring: []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25},
 				},
@@ -139,7 +152,7 @@ func TestNewEnigmaMachine(t *testing.T) {
 		},
 		{
 			name:    "error in roman number",
-			value:   "[I,22,1] [III,13,24] [IIV,5,2]",
+			value:   "[I,22,1] [III,13,24] [IIV,5,2] {C}",
 			want:    Enigma{},
 			wantErr: errors.New("invalid roman number"),
 		},
