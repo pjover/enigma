@@ -25,7 +25,7 @@ func NewRotorNumber(number int) (RotorNumber, error) {
 	return RotorNumber(number - 1), nil
 }
 
-var stringValues = []string{
+var rotorStringValues = []string{
 	"I",
 	"II",
 	"III",
@@ -37,7 +37,7 @@ var stringValues = []string{
 }
 
 func (r RotorNumber) String() string {
-	return stringValues[r]
+	return rotorStringValues[r]
 }
 
 func firstNotchTypeFunc(notchPosition int, rotorPosition int) bool {
