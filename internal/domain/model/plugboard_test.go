@@ -85,19 +85,58 @@ func TestNewPlugboard(t *testing.T) {
 		wantErr error
 	}{
 		{
-			name:  "OK",
-			value: "AB,ZY,MN",
+			name:  "Empty plugboard",
+			value: "",
 			want: Plugboard{
-				{from: 0, to: 1},
-				{from: 25, to: 24},
-				{from: 12, to: 13},
+				cables: []PlugboardCable{},
+				wiring: []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25},
 			},
 			wantErr: nil,
 		},
 		{
-			name:    "Empty plugboard",
-			value:   "",
-			want:    Plugboard{},
+			name:  "One cable",
+			value: "AB",
+			want: Plugboard{
+				cables: []PlugboardCable{
+					{from: 0, to: 1},
+				},
+				wiring: []int{1, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25},
+			},
+			wantErr: nil,
+		},
+		{
+			name:  "Two cables",
+			value: "AB,CD",
+			want: Plugboard{
+				cables: []PlugboardCable{
+					{from: 0, to: 1},
+					{from: 2, to: 3},
+				},
+				wiring: []int{1, 0, 3, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25},
+			},
+			wantErr: nil,
+		},
+		{
+			name:  "All cables",
+			value: "AB,CD,EF,GH,IJ,KL,MN,OP,QR,ST,UV,WX,YZ",
+			want: Plugboard{
+				cables: []PlugboardCable{
+					{from: 0, to: 1},
+					{from: 2, to: 3},
+					{from: 4, to: 5},
+					{from: 6, to: 7},
+					{from: 8, to: 9},
+					{from: 10, to: 11},
+					{from: 12, to: 13},
+					{from: 14, to: 15},
+					{from: 16, to: 17},
+					{from: 18, to: 19},
+					{from: 20, to: 21},
+					{from: 22, to: 23},
+					{from: 24, to: 25},
+				},
+				wiring: []int{1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14, 17, 16, 19, 18, 21, 20, 23, 22, 25, 24},
+			},
 			wantErr: nil,
 		},
 		{

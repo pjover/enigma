@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+var emptyPlugboard = []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25}
+
 type PlugboardCable struct {
 	from int
 	to   int
@@ -56,12 +58,18 @@ func (p PlugboardCable) Format() string {
 	return fmt.Sprintf("plugboard cable %s-", p.String())
 }
 
-type Plugboard []PlugboardCable
+type Plugboard struct {
+	cables []PlugboardCable
+	wiring []int
+}
 
 func NewPlugboard(value string) (Plugboard, error) {
 	cables := make([]PlugboardCable, 0)
 	if value == "" {
-		return cables, nil
+		return Plugboard{
+			cables,
+			emptyPlugboard,
+		}, nil
 	}
 	values := strings.Split(value, ",")
 	controlMap := make(map[int]bool)
@@ -72,7 +80,11 @@ func NewPlugboard(value string) (Plugboard, error) {
 		}
 		cables = append(cables, cable)
 	}
-	return cables, nil
+
+	return Plugboard{
+		cables,
+		buildWiring(cables),
+	}, nil
 }
 
 func loadCable(controlMap map[int]bool, pair string) (PlugboardCable, error) {
@@ -98,9 +110,24 @@ func repeatControl(controlMap map[int]bool, value int) error {
 	return nil
 }
 
+func buildWiring(cables []PlugboardCable) []int {
+	wiring := make([]int, len(emptyPlugboard))
+	copy(wiring, emptyPlugboard)
+
+	if len(cables) == 0 {
+		return wiring
+	}
+
+	for _, cable := range cables {
+		wiring[cable.from] = cable.to
+		wiring[cable.to] = cable.from
+	}
+	return wiring
+}
+
 func (p Plugboard) String() string {
-	s := make([]string, len(p))
-	for i, v := range p {
+	s := make([]string, len(p.cables))
+	for i, v := range p.cables {
 		s[i] = v.String()
 	}
 	return "(" + strings.Join(s, ",") + ")"
@@ -112,8 +139,8 @@ func (p Plugboard) GetFreePlugs() []int {
 		freePlugs[i] = true
 	}
 
-	for i := 0; i < len(p); i++ {
-		cable := p[i]
+	for i := 0; i < len(p.cables); i++ {
+		cable := p.cables[i]
 		freePlugs[cable.from] = false
 		freePlugs[cable.to] = false
 	}

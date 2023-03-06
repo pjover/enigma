@@ -23,26 +23,29 @@ var testEnigma = Enigma{
 		position:    RotorPosition(12),
 	},
 	plugboardCables: Plugboard{
-		PlugboardCable{
-			from: 0,
-			to:   25,
+		cables: []PlugboardCable{
+			{
+				from: 0,
+				to:   25,
+			},
+			{
+				from: 24,
+				to:   13,
+			},
+			{
+				from: 12,
+				to:   5,
+			},
+			{
+				from: 14,
+				to:   16,
+			},
+			{
+				from: 22,
+				to:   7,
+			},
 		},
-		PlugboardCable{
-			from: 24,
-			to:   13,
-		},
-		PlugboardCable{
-			from: 12,
-			to:   5,
-		},
-		PlugboardCable{
-			from: 14,
-			to:   16,
-		},
-		PlugboardCable{
-			from: 22,
-			to:   7,
-		},
+		wiring: []int{25, 1, 2, 3, 4, 12, 6, 22, 8, 9, 10, 11, 5, 24, 16, 15, 14, 17, 18, 19, 20, 21, 7, 23, 13, 0},
 	},
 }
 
@@ -127,7 +130,10 @@ func TestNewEnigmaMachine(t *testing.T) {
 					ringSetting: RingSetting(5),
 					position:    RotorPosition(12),
 				},
-				plugboardCables: Plugboard{},
+				plugboardCables: Plugboard{
+					cables: []PlugboardCable{},
+					wiring: []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25},
+				},
 			},
 			wantErr: nil,
 		},
