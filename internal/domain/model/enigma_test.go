@@ -3,46 +3,52 @@ package model
 import (
 	"errors"
 	"github.com/stretchr/testify/assert"
+	"log"
+	"strings"
 	"testing"
 )
 
 var testEnigma = Enigma{
-	rotors: Rotors{
-		first:  I,
-		second: III,
-		third:  VI,
+	leftRotor: &Rotor{
+		number:      I,
+		ringSetting: RingSetting(22),
+		position:    RotorPosition(1),
 	},
-	rotorPositions: RotorPositions{
-		first:  1,
-		second: 24,
-		third:  12,
+	middleRotor: &Rotor{
+		number:      III,
+		ringSetting: RingSetting(13),
+		position:    RotorPosition(24),
 	},
-	rotorRings: RotorRings{
-		first:  22,
-		second: 13,
-		third:  5,
+	rightRotor: &Rotor{
+		number:      VI,
+		ringSetting: RingSetting(5),
+		position:    RotorPosition(12),
 	},
-	plugboardCables: PlugboardCables{
-		PlugboardCable{
-			from: 'A',
-			to:   'Z',
+	reflector: A,
+	plugboard: &Plugboard{
+		cables: []PlugboardCable{
+			{
+				from: 0,
+				to:   25,
+			},
+			{
+				from: 24,
+				to:   13,
+			},
+			{
+				from: 12,
+				to:   5,
+			},
+			{
+				from: 14,
+				to:   16,
+			},
+			{
+				from: 22,
+				to:   7,
+			},
 		},
-		PlugboardCable{
-			from: 'Y',
-			to:   'N',
-		},
-		PlugboardCable{
-			from: 'M',
-			to:   'F',
-		},
-		PlugboardCable{
-			from: 'O',
-			to:   'Q',
-		},
-		PlugboardCable{
-			from: 'W',
-			to:   'H',
-		},
+		wiring: []int{25, 1, 2, 3, 4, 12, 6, 22, 8, 9, 10, 11, 5, 24, 16, 15, 14, 17, 18, 19, 20, 21, 7, 23, 13, 0},
 	},
 }
 
@@ -55,7 +61,7 @@ func TestEnigma_String(t *testing.T) {
 		{
 			name:  "String",
 			value: testEnigma,
-			want:  "Enigma rotors: I,III,VI, pos: 1,24,12, rings: 22,13,5, cables: A-Z,Y-N,M-F,O-Q,W-H",
+			want:  "[I,22,1] [III,13,24] [VI,5,12] {A} (AZ,YN,MF,OQ,WH)",
 		},
 	}
 	for _, tt := range tests {
@@ -68,6 +74,9 @@ func TestEnigma_String(t *testing.T) {
 }
 
 func TestNewEnigmaMachine(t *testing.T) {
+	testErr := errors.New("error parsing enigma values, " +
+		"must define 3 rotors, one reflector and plugboard cables, like " +
+		"[I,22,1] [III,13,24] [VI,5,12] {A} (AZ,YN,MF,OQ,WH)")
 	tests := []struct {
 		name    string
 		value   string
@@ -78,48 +87,76 @@ func TestNewEnigmaMachine(t *testing.T) {
 			name:    "empty value",
 			value:   "",
 			want:    Enigma{},
-			wantErr: errors.New("error parsing enigma values, must define 4 groups separated by '#'"),
+			wantErr: testErr,
 		},
 		{
-			name:    "missed one value",
-			value:   "I,III,VI#1,24,12#22,13,5",
+			name:    "random value",
+			value:   "loren ipsum",
 			want:    Enigma{},
-			wantErr: errors.New("error parsing enigma values, must define 4 groups separated by '#'"),
+			wantErr: testErr,
+		},
+		{
+			name:    "wrong format",
+			value:   "[I,22:1] [III,13,24] (AZ,YN,MF,OQ,WH)",
+			want:    Enigma{},
+			wantErr: testErr,
+		},
+		{
+			name:    "missed reflector",
+			value:   "[I,22:1] [III,13,24] [VI,5,12] (AZ,YN,MF,OQ,WH)",
+			want:    Enigma{},
+			wantErr: testErr,
+		},
+		{
+			name:    "missed one rotor",
+			value:   "[I,22,1] [III,13,24] {A} (AZ,YN,MF,OQ,WH)",
+			want:    Enigma{},
+			wantErr: testErr,
+		},
+		{
+			name:    "wrong reflector",
+			value:   "[I,22,1] [III,13,24] {D} (AZ,YN,MF,OQ,WH)",
+			want:    Enigma{},
+			wantErr: testErr,
 		},
 		{
 			name:    "happy case",
-			value:   "I,III,VI#1,24,12#22,13,5#AZ,YN,MF,OQ,WH",
+			value:   "[I,22,1] [III,13,24] [VI,5,12] {A} (AZ,YN,MF,OQ,WH)",
 			want:    testEnigma,
 			wantErr: nil,
 		},
 		{
 			name:  "no cables",
-			value: "I,III,VI#1,24,12#22,13,5#",
+			value: "[I,22,1] [III,13,24] [VI,5,12] {B}",
 			want: Enigma{
-				rotors: Rotors{
-					first:  I,
-					second: III,
-					third:  VI,
+				leftRotor: &Rotor{
+					number:      I,
+					ringSetting: RingSetting(22),
+					position:    RotorPosition(1),
 				},
-				rotorPositions: RotorPositions{
-					first:  1,
-					second: 24,
-					third:  12,
+				middleRotor: &Rotor{
+					number:      III,
+					ringSetting: RingSetting(13),
+					position:    RotorPosition(24),
 				},
-				rotorRings: RotorRings{
-					first:  22,
-					second: 13,
-					third:  5,
+				rightRotor: &Rotor{
+					number:      VI,
+					ringSetting: RingSetting(5),
+					position:    RotorPosition(12),
 				},
-				plugboardCables: PlugboardCables{},
+				reflector: B,
+				plugboard: &Plugboard{
+					cables: []PlugboardCable{},
+					wiring: []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25},
+				},
 			},
 			wantErr: nil,
 		},
 		{
-			name:    "error in value",
-			value:   "I,III,X#1,24,12#22,13,5#AZ,YN,MF,OQ,WH",
+			name:    "error in roman number",
+			value:   "[I,22,1] [III,13,24] [IIV,5,2] {C}",
 			want:    Enigma{},
-			wantErr: errors.New("'X' is an invalid enigma rotor value"),
+			wantErr: errors.New("invalid roman number"),
 		},
 	}
 	for _, tt := range tests {
@@ -129,4 +166,104 @@ func TestNewEnigmaMachine(t *testing.T) {
 			assert.Equal(t, tt.wantErr, err)
 		})
 	}
+}
+
+func TestEnigma_Encrypt(t *testing.T) {
+	text1 := "ABCDEFGHIJKLMNOPQRSTUVWXYZAAAAAAAAAAAAAAAAAAAAAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBBABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	text2 := strings.Repeat("VERYLONGTEXT", 100)
+	tests := []struct {
+		name   string
+		enigma Enigma
+		text   string
+		want   string
+	}{
+		{
+			"Case 1",
+			getEnigma("[I,0,0] [II,0,0] [III,0,0] {B}"),
+			text1,
+			"BJELRQZVJWARXSNBXORSTNCFMEYHCXTGYJFLINHNXSHIUNTHEORXOPLOVFEKAGADSPNPCMHRVZCYECDAZIHVYGPITMSRZKGGHLSRBLHL",
+		},
+		{
+			"VCase 2",
+			getEnigma("[VII,1,10] [V,2,5] [IV,3,12] {B}"),
+			text1,
+			"FOTYBPKLBZQSGZBOPUFYPFUSETWKNQQHVNHLKJZZZKHUBEJLGVUNIOYSDTEZJQHHAOYYZSENTGXNJCHEDFHQUCGCGJBURNSEDZSEPLQP",
+		},
+		{
+			"Case 3",
+			getEnigma("[VII,11,11] [V,21,25] [IV,13,21] {A}"),
+			text1,
+			"NMZKCJSPLIACAUFRHEIIGEXJEYOOGNHLWEBCDOXQURFKKTSQBDOMVENAWCHSWHORCMVNGMLJJARHYGECJZNDKOTWDQISATHLFZRQDGIP",
+		},
+		{
+			"Case 4",
+			getEnigma("[VII,7,1] [V,17,5] [IV,11,11] {C}"),
+			text1,
+			"PCJXMPUBFYYCTPRDWYRWFBTLOXTTFXRLFSELGPHDCEFIGPQDRTERJCSUPHTUWAHOCDQKZVQYNRWTOXGPOPSQERGNDEBSTIXVTIGAYVUI",
+		},
+		{
+			"Case 5",
+			getEnigma("[III,11,3] [VI,13,5] [VIII,19,9] {B}"),
+			text2,
+			"PDGZFQPWNUOLTHLIJMJFGFVUFUAMKRTVGMAZGVVGEVBQCAZXETUQHIUKWCCYAQUIMCXWFYLSQQONAUMBDOYJNAWNFHECCL" +
+				"WSRSCVCRWUCUOCPXPXAFTDZYNBURNIWZQFESLSYZYMGUVOMWJWPGGHEATIDPFVYVYWIURLAGFPUWBVYCCZJOYIMGZEVVDFR" +
+				"HOPPWIOFJPJSMBDTWCBCXIZSVBGXQXBDCINLVQLDLDENGYAEBIAABZSFEWUMJNVTUSBHGMLFXUOGWFCRZYWBTKZXTKPVIKI" +
+				"QLFLSNIVQJDLYPOYXCNEFMWMXXCXXRNWISRCMAVPZPUETHVHXOJQMRSSEWDSSDLKHPUPHJWPOFYDJMFECXTDDZTVHMOJSNM" +
+				"FJCHAPBDLBVFSNCTASIBJMESFAYQYIHBCGZEJOLDVBIEKRADAYPKIDNSKJXPIBLSWSJVCSXUCGXCGNRAWIIKLHIZKKOVQVI" +
+				"XVKOMWMKHHZWQTGXDLAIWMXAYCIVSAJKDFGXIQQUZMGRWKOVDNGFWFWYKCPKUQEHBDCFCNMWSTDFBCPCDNYMGIOLZNPIGHG" +
+				"THXXTWDOUNLYBIOIODAWVNGUDALUPHRABCQXRTZLMFZTKPPWCZAMZUQABCZFUIFCTQLWTMVCMTZLFNUCLGRKBUTQKFDGRGU" +
+				"JCCVWTQBOWUXEVDMWDIJNWQSNACUVJWWQVNWGHJEEZKKDUXLRSIDLQAKXYTOONTDHPHIWPOFSDBLSAUMUBVNWSWWFKEVHYQ" +
+				"BVSQWEATFPVGMBAWWZKPSEQMCWPVLIWBOUXWCCIXQJUSGCLJESUDUGWDOHCVSOJWAGMPJTAESDUOFMNZGXSPHKMQZMLTKGS" +
+				"FCXECWOAMWANZAMSJXMTTURNNTFFLLYYACRXUMHZEDHDEPLTFAKKEKXYKINPSETFRIUKNNEZGTIADHNFKZELQFBRKVBNCBQ" +
+				"KCOHPBJXDZAGFYSZJCAVDOYPWMPFEWHZLLCSYVNBQKYPLTKODOJXTARJMJYORFOPXUCLPEZWMEWXKLHPNWGUAWGUMGPQSZQ" +
+				"ZJNLYBHEQWAGFPXXTUCQZSZEDDMVQJDFZHGCQSTAXTJHNPBMLCYJPCARUZWZYSOWEQPMFZYKGTQLMJEZMMNPMJHTUSXXKBW" +
+				"QMNDZIQSSIPAAEBBNOLICDYPNRYXVZGVUVSMARLGWZEIOKRTIXTPXHKTDNJOK",
+		},
+		{
+			"Case 6",
+			getEnigma("[I,0,0] [II,0,0] [III,0,0] {B} (AC,FG,JY,LW)"),
+			"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+			"QREBNMCYZELKQOJCGJVIVGLYEMUPCURPVPUMDIWXPPWROOQEGI",
+		},
+		{
+			"Case 7",
+			getEnigma("[IV,0,0] [VI,0,10] [III,0,6] {B} (BM,DH,RS,KN,GZ,FQ)"),
+			"WRBHFRROSFHBCHVBENQFAGNYCGCRSTQYAJNROJAKVKXAHGUZHZVKWUTDGMBMSCYQSKABUGRVMIUOWAPKCMHYCRTSDEYTNJLVWNQY",
+			"FYTIDQIBHDONUPAUVPNKILDHDJGCWFVMJUFNJSFYZTSPITBURMCJEEAMZAZIJMZAVFCTYTKYORHYDDSXHBLQWPJBMSSWIPSWLENZ",
+		},
+		{
+			"Case 8",
+			getEnigma("[I,5,0] [II,5,1] [III,4,20] {B} (AG,HR,YT,KI,FL,WE,NM,SD,OP,QJ)"),
+			"RNXYAZUYTFNQFMBOLNYNYBUYPMWJUQSBYRHPOIRKQSIKBKEKEAJUNNVGUQDODVFQZHASHMQIHSQXICTSJNAUVZYIHVBBARPJADRH",
+			"CFBJTPYXROYGGVTGBUTEBURBXNUZGGRALBNXIQHVBFWPLZQSCEZWTAWCKKPRSWOGNYXLCOTQAWDRRKBCADTKZGPWSTNYIJGLVIUQ",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			actual := tt.enigma.Encrypt(tt.text)
+			assert.Equal(t, tt.want, actual)
+		})
+	}
+}
+
+func TestEnigma_Encrypt_and_Decrypt(t *testing.T) {
+	t.Run("Encrypt and decrypt", func(t *testing.T) {
+		enigma1 := getEnigma("[IV,0,0] [VI,0,10] [III,0,6] {B} (BM,DH,RS,KN,GZ,FQ)")
+		clearText := strings.Repeat("TEXTTOENCRYPT", 50)
+		encryptedText := enigma1.Encrypt(clearText)
+
+		enigma2 := getEnigma("[IV,0,0] [VI,0,10] [III,0,6] {B} (BM,DH,RS,KN,GZ,FQ)")
+		decryptedText := enigma2.Encrypt(encryptedText)
+
+		assert.Equal(t, clearText, decryptedText)
+	})
+
+}
+
+func getEnigma(text string) Enigma {
+	enigma, err := NewEnigmaMachine(text)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return enigma
 }

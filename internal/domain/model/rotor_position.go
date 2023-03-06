@@ -5,17 +5,13 @@ import (
 	"strconv"
 )
 
-type RotorPosition uint
+type RotorPosition int
 
-func NewRotorPosition(value string) (RotorPosition, error) {
-	number, err := strconv.Atoi(value)
-	if err != nil {
-		return 0, fmt.Errorf("'%s' is an invalid enigma rotor position number", value)
+func NewRotorPosition(position int) (RotorPosition, error) {
+	if position < 0 || position > 25 {
+		return RotorPosition(0), fmt.Errorf("%d is an invalid enigma rotor position value", position)
 	}
-	if number == 0 || number > 26 {
-		return RotorPosition(0), fmt.Errorf("'%s' is an invalid enigma rotor position value", value)
-	}
-	return RotorPosition(number), nil
+	return RotorPosition(position), nil
 }
 
 func (r RotorPosition) String() string {
