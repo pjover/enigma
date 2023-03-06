@@ -15,10 +15,16 @@ func TestNewRingSetting(t *testing.T) {
 		wantErr     error
 	}{
 		{
+			name:        "Negative",
+			ringSetting: -1,
+			want:        0,
+			wantErr:     errors.New("-1 is an invalid enigma rotor ring setting value"),
+		},
+		{
 			name:        "Zero",
 			ringSetting: 0,
 			want:        0,
-			wantErr:     errors.New("'0' is an invalid enigma rotor ring setting value"),
+			wantErr:     nil,
 		},
 		{
 			name:        "One",
@@ -27,16 +33,16 @@ func TestNewRingSetting(t *testing.T) {
 			wantErr:     nil,
 		},
 		{
-			name:        "Twenty six",
-			ringSetting: 26,
-			want:        26,
+			name:        "Twenty five",
+			ringSetting: 25,
+			want:        25,
 			wantErr:     nil,
 		},
 		{
-			name:        "Twenty seven",
-			ringSetting: 27,
+			name:        "Twenty six",
+			ringSetting: 26,
 			want:        0,
-			wantErr:     errors.New("'27' is an invalid enigma rotor ring setting value"),
+			wantErr:     errors.New("26 is an invalid enigma rotor ring setting value"),
 		},
 	}
 	for _, tt := range tests {
