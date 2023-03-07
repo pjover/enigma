@@ -26,9 +26,9 @@ func TestNewPlugboardCable(t *testing.T) {
 			wantErr: nil,
 		},
 		{
-			name:    "ZY",
+			name:    "ZY -> YZ",
 			value:   "ZY",
-			want:    PlugboardCable{from: 25, to: 24},
+			want:    PlugboardCable{from: 24, to: 25},
 			wantErr: nil,
 		},
 		{
@@ -77,7 +77,7 @@ func TestNewPlugboardCable(t *testing.T) {
 	}
 }
 
-func TestNewPlugboard(t *testing.T) {
+func TestNewPlugboardFromText(t *testing.T) {
 	tests := []struct {
 		name    string
 		value   string
@@ -154,7 +154,7 @@ func TestNewPlugboard(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewPlugboard(tt.value)
+			got, err := NewPlugboardFromText(tt.value)
 			assert.Equal(t, tt.want, got)
 			assert.Equal(t, tt.wantErr, err)
 		})
@@ -282,6 +282,6 @@ func TestPlugboard_Forward(t *testing.T) {
 }
 
 func getPlugboard(value string) Plugboard {
-	p, _ := NewPlugboard(value)
+	p, _ := NewPlugboardFromText(value)
 	return p
 }

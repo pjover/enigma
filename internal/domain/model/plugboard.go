@@ -20,34 +20,37 @@ func (p PlugboardCable) To() int {
 	return p.to
 }
 
-func NewPlugboardCable(value string) (PlugboardCable, error) {
-	if len(value) != 2 {
-		return PlugboardCable{}, fmt.Errorf("'%s' is an invalid enigma plugboard cable value", value)
+func NewPlugboardCable(text string) (PlugboardCable, error) {
+	if len(text) != 2 {
+		return PlugboardCable{}, fmt.Errorf("'%s' is an invalid enigma plugboard cable value", text)
 	}
 
-	value = strings.ToUpper(value)
-	from, err := validatePlugboardCableValue(int(value[0]))
+	text = strings.ToUpper(text)
+	v1, err := getPlugboardCableValue(int(text[0]))
 	if err != nil {
 		return PlugboardCable{}, err
 	}
 
-	to, err := validatePlugboardCableValue(int(value[1]))
+	v2, err := getPlugboardCableValue(int(text[1]))
 	if err != nil {
 		return PlugboardCable{}, err
 	}
 
-	if from == to {
+	if v1 == v2 {
 		return PlugboardCable{}, errors.New("cannot repeat values in a enigma plugboard cable value")
 	}
 
-	return PlugboardCable{from: from - 65, to: to - 65}, nil
+	if v1 < v2 {
+		return PlugboardCable{v1, v2}, nil
+	}
+	return PlugboardCable{v2, v1}, nil
 }
 
-func validatePlugboardCableValue(value int) (int, error) {
+func getPlugboardCableValue(value int) (int, error) {
 	if value < 'A' || value > 'Z' {
 		return 0, fmt.Errorf("'%c' is an invalid enigma plugboard value", value)
 	}
-	return value, nil
+	return value - 65, nil
 }
 
 func (p PlugboardCable) String() string {
@@ -63,15 +66,22 @@ type Plugboard struct {
 	wiring []int
 }
 
-func NewPlugboard(value string) (Plugboard, error) {
+func NewPlugboard(cables []PlugboardCable) Plugboard {
+	return Plugboard{
+		cables,
+		buildWiring(cables),
+	}
+}
+
+func NewPlugboardFromText(text string) (Plugboard, error) {
 	cables := make([]PlugboardCable, 0)
-	if value == "" {
+	if text == "" {
 		return Plugboard{
 			cables,
 			emptyPlugboard,
 		}, nil
 	}
-	values := strings.Split(value, ",")
+	values := strings.Split(text, ",")
 	controlMap := make(map[int]bool)
 	for _, pair := range values {
 		cable, err := loadCable(controlMap, pair)
@@ -81,10 +91,7 @@ func NewPlugboard(value string) (Plugboard, error) {
 		cables = append(cables, cable)
 	}
 
-	return Plugboard{
-		cables,
-		buildWiring(cables),
-	}, nil
+	return NewPlugboard(cables), nil
 }
 
 func loadCable(controlMap map[int]bool, pair string) (PlugboardCable, error) {
