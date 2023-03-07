@@ -12,11 +12,21 @@ type Enigma struct {
 	leftRotor   *Rotor
 	middleRotor *Rotor
 	rightRotor  *Rotor
-	plugboard   *Plugboard
+	plugboard   Plugboard
 	reflector   Reflector
 }
 
-func NewEnigmaMachine(text string) (Enigma, error) {
+func NewEnigma(leftRotor *Rotor, middleRotor *Rotor, rightRotor *Rotor, reflector Reflector, plugboardCables []PlugboardCable) Enigma {
+	return Enigma{
+		leftRotor:   leftRotor,
+		middleRotor: middleRotor,
+		rightRotor:  rightRotor,
+		reflector:   reflector,
+		plugboard:   NewPlugboard(plugboardCables),
+	}
+}
+
+func NewEnigmaFromText(text string) (Enigma, error) {
 	values, err := splitText(text)
 	if err != nil {
 		return Enigma{}, err
@@ -38,7 +48,7 @@ func NewEnigmaMachine(text string) (Enigma, error) {
 
 	var plugboard Plugboard
 	if len(values) == 5 {
-		plugboard, err = NewPlugboard(values[4])
+		plugboard, err = NewPlugboardFromText(values[4])
 		if err != nil {
 			return Enigma{}, err
 		}
@@ -49,7 +59,7 @@ func NewEnigmaMachine(text string) (Enigma, error) {
 		middleRotor: &rotors[1],
 		rightRotor:  &rotors[2],
 		reflector:   reflector,
-		plugboard:   &plugboard,
+		plugboard:   plugboard,
 	}, nil
 }
 
