@@ -102,116 +102,113 @@ func TestRotorNumber_Encoding(t *testing.T) {
 }
 
 func TestRotorNumber_IsAtNotch(t *testing.T) {
-	type args struct {
-		notchPosition int
-		rotorPosition int
-	}
 	tests := []struct {
-		name string
-		r    RotorNumber
-		args args
-		want bool
+		name            string
+		r               RotorNumber
+		currentPosition RotorPosition
+		want            bool
 	}{
 		{
 			"I, is notch",
 			I,
-			args{1, 1},
+			RotorPosition(16),
 			true,
 		},
 		{
 			"I, is not notch",
 			I,
-			args{1, 2},
+			RotorPosition(15),
 			false,
 		},
 		{
 			"II, is notch",
 			II,
-			args{2, 2},
+			RotorPosition(4),
 			true,
 		},
 		{
 			"II, is not notch",
 			II,
-			args{3, 2},
+			RotorPosition(5),
 			false,
 		},
 		{
 			"III, is notch",
 			III,
-			args{3, 3},
+			RotorPosition(21),
 			true,
 		},
 		{
 			"III, is not notch",
 			III,
-			args{3, 2},
+			RotorPosition(22),
 			false,
 		},
 		{
 			"IV, is notch",
 			IV,
-			args{4, 4},
+			RotorPosition(9),
 			true,
 		},
 		{
 			"IV, is not notch",
 			IV,
-			args{4, 5},
+			RotorPosition(8),
 			false,
 		},
 		{
 			"V, is notch",
 			V,
-			args{25, 25},
+			RotorPosition(25),
 			true,
 		},
 		{
 			"V, is not notch",
 			V,
-			args{21, 22},
+			RotorPosition(21),
 			false,
 		},
 		{
 			"VI, is notch",
 			VI,
-			args{6, 12},
+			RotorPosition(12),
 			true,
 		},
 		{
 			"VI, is not notch",
 			VI,
-			args{1, 21},
+			RotorPosition(24),
 			false,
 		},
 		{
 			"VII, is notch",
 			VII,
-			args{6, 25},
+			RotorPosition(25),
 			true,
 		},
 		{
 			"VII, is not notch",
 			VII,
-			args{1, 26},
+			RotorPosition(15),
 			false,
 		},
 		{
 			"VIII, is notch",
 			VIII,
-			args{6, 12},
+			RotorPosition(25),
 			true,
 		},
 		{
 			"VIII, is not notch",
 			VIII,
-			args{1, 13},
+			RotorPosition(17),
 			false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equalf(t, tt.want, tt.r.IsAtNotch(tt.args.notchPosition, tt.args.rotorPosition), "IsAtNotch(%v, %v)", tt.args.notchPosition, tt.args.rotorPosition)
+			actual := tt.r.IsAtNotch(tt.currentPosition)
+			assert.Equal(t, tt.want, actual)
 		})
 	}
 }
