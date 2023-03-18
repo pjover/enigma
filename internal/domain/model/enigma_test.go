@@ -8,49 +8,31 @@ import (
 	"testing"
 )
 
-var testEnigma = Enigma{
-	leftRotor: &Rotor{
+var testEnigma = NewEnigma(
+	&Rotor{
 		number:      I,
 		ringSetting: RingSetting(22),
 		position:    RotorPosition(1),
 	},
-	middleRotor: &Rotor{
+	&Rotor{
 		number:      III,
 		ringSetting: RingSetting(13),
 		position:    RotorPosition(24),
 	},
-	rightRotor: &Rotor{
+	&Rotor{
 		number:      VI,
 		ringSetting: RingSetting(5),
 		position:    RotorPosition(12),
 	},
-	reflector: A,
-	plugboard: &Plugboard{
-		cables: []PlugboardCable{
-			{
-				from: 0,
-				to:   25,
-			},
-			{
-				from: 24,
-				to:   13,
-			},
-			{
-				from: 12,
-				to:   5,
-			},
-			{
-				from: 14,
-				to:   16,
-			},
-			{
-				from: 22,
-				to:   7,
-			},
-		},
-		wiring: []int{25, 1, 2, 3, 4, 12, 6, 22, 8, 9, 10, 11, 5, 24, 16, 15, 14, 17, 18, 19, 20, 21, 7, 23, 13, 0},
+	A,
+	[]PlugboardCable{
+		{from: 0, to: 25},
+		{from: 13, to: 24},
+		{from: 5, to: 12},
+		{from: 14, to: 16},
+		{from: 7, to: 22},
 	},
-}
+)
 
 func TestEnigma_String(t *testing.T) {
 	tests := []struct {
@@ -61,7 +43,7 @@ func TestEnigma_String(t *testing.T) {
 		{
 			name:  "String",
 			value: testEnigma,
-			want:  "[I,22,1] [III,13,24] [VI,5,12] {A} (AZ,YN,MF,OQ,WH)",
+			want:  "[I,22,1] [III,13,24] [VI,5,12] {A} (AZ,NY,FM,OQ,HW)",
 		},
 	}
 	for _, tt := range tests {
@@ -73,7 +55,7 @@ func TestEnigma_String(t *testing.T) {
 	}
 }
 
-func TestNewEnigmaMachine(t *testing.T) {
+func TestNewEnigmaFromText(t *testing.T) {
 	testErr := errors.New("error parsing enigma values, " +
 		"must define 3 rotors, one reflector and plugboard cables, like " +
 		"[I,22,1] [III,13,24] [VI,5,12] {A} (AZ,YN,MF,OQ,WH)")
@@ -121,7 +103,7 @@ func TestNewEnigmaMachine(t *testing.T) {
 		},
 		{
 			name:    "happy case",
-			value:   "[I,22,1] [III,13,24] [VI,5,12] {A} (AZ,YN,MF,OQ,WH)",
+			value:   "[I,22,1] [III,13,24] [VI,5,12] {A} (AZ,NY,FM,OQ,HW)",
 			want:    testEnigma,
 			wantErr: nil,
 		},
@@ -145,7 +127,7 @@ func TestNewEnigmaMachine(t *testing.T) {
 					position:    RotorPosition(12),
 				},
 				reflector: B,
-				plugboard: &Plugboard{
+				plugboard: Plugboard{
 					cables: []PlugboardCable{},
 					wiring: []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25},
 				},
@@ -161,7 +143,7 @@ func TestNewEnigmaMachine(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewEnigmaMachine(tt.value)
+			got, err := NewEnigmaFromText(tt.value)
 			assert.Equal(t, tt.want, got)
 			assert.Equal(t, tt.wantErr, err)
 		})
@@ -237,6 +219,12 @@ func TestEnigma_Encrypt(t *testing.T) {
 			"RNXYAZUYTFNQFMBOLNYNYBUYPMWJUQSBYRHPOIRKQSIKBKEKEAJUNNVGUQDODVFQZHASHMQIHSQXICTSJNAUVZYIHVBBARPJADRH",
 			"CFBJTPYXROYGGVTGBUTEBURBXNUZGGRALBNXIQHVBFWPLZQSCEZWTAWCKKPRSWOGNYXLCOTQAWDRRKBCADTKZGPWSTNYIJGLVIUQ",
 		},
+		{
+			"Case 9",
+			getEnigma("[II,12,7] [V,2,4] [III,20,19] {B} (AF,TV,KO,BL,RW)"),
+			"OZLUDYAKMGMXVFVARPMJIKVWPMBVWMOIDHYPLAYUWGBZFAFAFUQFZQISLEZMYPVBRDDLAGIHIFUJDFADORQOOMIZPYXDCBPWDSSNUSYZTJEWZPWFBWBMIEQXRFASZLOPPZRJKJSPPSTXKPUWYSKNMZZLHJDXJMMMDFODIHUBVCXMNICNYQBNQODFQLOGPZYXRJMTLMRKQAUQJPADHDZPFIKTQBFXAYMVSZPKXIQLOQCVRPKOBZSXIUBAAJBRSNAFDMLLBVSYXISFXQZKQJRIQHOSHVYJXIFUZRMXWJVWHCCYHCXYGRKMKBPWRDBXXRGABQBZRJDVHFPJZUSEBHWAEOGEUQFZEEBDCWNDHIAQDMHKPRVYHQGRDYQIOEOLUBGBSNXWPZCHLDZQBWBEWOCQDBAFGUVHNGCIKXEIZGIZHPJFCTMNNNAUXEVWTWACHOLOLSLTMDRZJZEVKKSSGUUTHVXXODSKTFGRUEIIXVWQYUIPIDBFPGLBYXZTCOQBCAHJYNSGDYLREYBRAKXGKQKWJEKWGAPTHGOMXJDSQKYHMFGOLXBSKVLGNZOAXGVTGXUIVFTGKPJU",
+			"IPROPOSETOCONSIDERTHEQUESTIONCANMACHINESTHINKTHISSHOULDBEGINWITHDEFINITIONSOFTHEMEANINGOFTHETERMSMACHINEANDTHINKTHEDEFINITIONSMIGHTBEFRAMEDSOASTOREFLECTSOFARASPOSSIBLETHENORMALUSEOFTHEWORDSBUTTHISATTITUDEISDANGEROUSIFTHEMEANINGOFTHEWORDSMACHINEANDTHINKARETOBEFOUNDBYEXAMININGHOWTHEYARECOMMONLYUSEDITISDIFFICULTTOESCAPETHECONCLUSIONTHATTHEMEANINGANDTHEANSWERTOTHEQUESTIONCANMACHINESTHINKISTOBESOUGHTINASTATISTICALSURVEYSUCHASAGALLUPPOLLBUTTHISISABSURDINSTEADOFATTEMPTINGSUCHADEFINITIONISHALLREPLACETHEQUESTIONBYANOTHERWHICHISCLOSELYRELATEDTOITANDISEXPRESSEDINRELATIVELYUNAMBIGUOUSWORDS",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -261,7 +249,7 @@ func TestEnigma_Encrypt_and_Decrypt(t *testing.T) {
 }
 
 func getEnigma(text string) Enigma {
-	enigma, err := NewEnigmaMachine(text)
+	enigma, err := NewEnigmaFromText(text)
 	if err != nil {
 		log.Fatal(err)
 	}

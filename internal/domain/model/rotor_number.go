@@ -40,29 +40,6 @@ func (r RotorNumber) String() string {
 	return rotorStringValues[r]
 }
 
-func firstNotchTypeFunc(notchPosition int, rotorPosition int) bool {
-	return notchPosition == rotorPosition
-}
-
-func secondNotchTypeFunc(_ int, rotorPosition int) bool {
-	return rotorPosition == 12 || rotorPosition == 25
-}
-
-var isAtNotchFunctions = []func(int, int) bool{
-	firstNotchTypeFunc,
-	firstNotchTypeFunc,
-	firstNotchTypeFunc,
-	firstNotchTypeFunc,
-	firstNotchTypeFunc,
-	secondNotchTypeFunc,
-	secondNotchTypeFunc,
-	secondNotchTypeFunc,
-}
-
-func (r RotorNumber) IsAtNotch(notchPosition int, rotorPosition int) bool {
-	return isAtNotchFunctions[r](notchPosition, rotorPosition)
-}
-
 var rotorEncodingValues = []string{
 	"EKMFLGDQVZNTOWYHXUSPAIBRCJ",
 	"AJDKSIRUXBLHWTMCQGZNPYFVOE",
@@ -123,4 +100,21 @@ var rotorInverseWiringValues = [][]int{
 
 func (r RotorNumber) InverseWiring() []int {
 	return rotorInverseWiringValues[r]
+}
+
+func (r RotorNumber) IsAtNotch(currentPosition RotorPosition) bool {
+	switch r {
+	case I:
+		return currentPosition == 16
+	case II:
+		return currentPosition == 4
+	case III:
+		return currentPosition == 21
+	case IV:
+		return currentPosition == 9
+	case V:
+		return currentPosition == 25
+	default:
+		return currentPosition == 12 || currentPosition == 25
+	}
 }

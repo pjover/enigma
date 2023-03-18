@@ -54,20 +54,7 @@ func (r *Rotor) Backward(i int) int {
 }
 
 func (r *Rotor) IsAtNotch() bool {
-	switch r.number {
-	case I:
-		return r.position == 16
-	case II:
-		return r.position == 4
-	case III:
-		return r.position == 21
-	case IV:
-		return r.position == 9
-	case V:
-		return r.position == 25
-	default:
-		return r.position == 12 || r.position == 25
-	}
+	return r.Number().IsAtNotch(r.position)
 }
 
 func (r *Rotor) TurnOver() {
